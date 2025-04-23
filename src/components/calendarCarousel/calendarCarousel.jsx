@@ -134,34 +134,42 @@ export default function CalendarCarousel() {
         <>
 
             {!!modalService && (
-                
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col">
                     <div className="bg-black p-4 rounded-lg shadow-lg w-full h-full overflow-auto">
-                    <h2 className="text-white text-2xl font-bold text-center mb-4 p-[30px]">Serviços</h2>
-                    {servicos.map((item, index) => (
+                        <h2 className="text-white text-2xl font-bold text-center mb-4 p-[30px]">Serviços</h2>
+                        {servicos.map((item, index) => (
                             <div
                                 key={index}
                                 className="flex items-center justify-center mt-[20px] flex-col cursor-pointer"
-
                             >
-                                <div className="w-full bg-[#111111] text-white rounded-[5px] p-[20px] gap-4">
+                                <div
+                                    className={`w-full bg-[#111111] text-white rounded-[5px] p-[20px] gap-4 
+                                    ${selectedService === index ? 'bg-blue-600' : ''}`}  // Adiciona a classe azul quando o serviço for selecionado
+                                    onClick={() => setSelectedService(index)}  // Salva o serviço selecionado
+                                >
                                     <div className="flex pb-2 flex-row justify-between">
-                                        <span className="p-[5px] w-[200px] ">{item.servico}</span>
+                                        <span className="p-[5px] w-[200px]">{item.servico}</span>
                                         <span className="p-[5px]">R${item.valor.toFixed(2)}</span>
-                                        <span className="p-[5px] cursor-pointer" onClick={() => handleToggle(index)} dangerouslySetInnerHTML={{ __html: expandedIndex === index ? '&#11165;' : '&#11167;' }} />
+                                        <span
+                                            className="p-[5px] cursor-pointer"
+                                            onClick={() => handleToggle(index)}
+                                            dangerouslySetInnerHTML={{
+                                                __html: expandedIndex === index ? '&#11165;' : '&#11167;'
+                                            }}
+                                        />
                                     </div>
 
                                     {expandedIndex === index && (
                                         <div className="mt-2 px-2 text-sm text-gray-300 transition-all duration-300">
-                                            <p>
-                                                {item.descricao}
-                                            </p>
+                                            <p>{item.descricao}</p>
                                         </div>
                                     )}
                                 </div>
                             </div>
                         ))}
                     </div>
+                    <button className='w-full h-[80px] bg-blue-600' onClick={() => setModalService(false)}>Escolher</button>
                 </div>
             )}
 
