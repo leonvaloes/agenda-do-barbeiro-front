@@ -13,7 +13,14 @@ export default function CalendarCarousel() {
     const [expandedIndex, setExpandedIndex] = useState(null);
 
     const [modalService, setModalService] = useState(true);
+    const [modalAtendente, setModalAtendente] = useState(false);
+    const [ModalAgenda, setModalAgenda] = useState(false);
+
     const [selectedService, setSelectedService] = useState(null);
+    const [selectedBarber, setSelectedBarber] = useState(null);
+
+    const [AlertModalService, setAlertModalService] = useState(false);
+    const [AlertModalAtendente, setAlertModalAtendente] = useState(false);
 
 
     const today = new Date();
@@ -23,7 +30,7 @@ export default function CalendarCarousel() {
     const mockScheduleData = [
         {
             date: format(addDays(today, 0), 'yyyy-MM-dd'),
-            times: ['08:00', '09:00', '10:30', '13:00', '14:00', '15:00']
+            times: ['08:00', '09:00', '10:30', '13:00', '14:00', '15:00', '16:00', '17:00']
         },
         {
             date: format(addDays(today, 1), 'yyyy-MM-dd'),
@@ -67,64 +74,104 @@ export default function CalendarCarousel() {
         {
             servico: "Corte de cabelo",
             valor: 30.00,
-            descricao: "Realizo o corte de cabelo que desejar"
+            descricao: "Realizo o corte de cabelo que desejar",
+            funcionarios: ["João", "Carlos", "Amanda"],
+            tempo: "30 min"
         },
         {
             servico: "Barba",
             valor: 20.00,
-            descricao: "Realizo a barba que desejar"
+            descricao: "Realizo a barba que desejar",
+            funcionarios: ["Carlos", "Eduardo"],
+            tempo: "15 min"
         },
         {
             servico: "Sobrancelha",
             valor: 15.00,
-            descricao: "Realizo a sobrancelha que desejar"
+            descricao: "Realizo a sobrancelha que desejar",
+            funcionarios: ["Amanda", "Juliana"],
+            tempo: "15 min"
         },
         {
             servico: "Corte de cabelo + Barba",
             valor: 50.00,
-            descricao: "Realizo o corte de cabelo e barba que desejar"
+            descricao: "Realizo o corte de cabelo e barba que desejar",
+            funcionarios: ["João", "Carlos"],
+            tempo: "45 min"
         },
         {
             servico: "Corte de cabelo + Sobrancelha",
             valor: 35.00,
-            descricao: "Realizo o corte de cabelo e sobrancelha que desejar"
+            descricao: "Realizo o corte de cabelo e sobrancelha que desejar",
+            funcionarios: ["Amanda", "João"],
+            tempo: "45 min"
         },
         {
             servico: "Barba + Sobrancelha",
             valor: 25.00,
-            descricao: "Realizo a barba e sobrancelha que desejar"
+            descricao: "Realizo a barba e sobrancelha que desejar",
+            funcionarios: ["Juliana", "Carlos"],
+            tempo: "30 min"
         },
         {
             servico: "Corte de cabelo + Barba + Sobrancelha",
             valor: 60.00,
-            descricao: "Realizo o corte de cabelo, barba e sobrancelha que desejar"
+            descricao: "Realizo o corte de cabelo, barba e sobrancelha que desejar",
+            funcionarios: ["João", "Amanda", "Carlos"],
+            tempo: "60 min"
         },
         {
             servico: "Corte de cabelo (do saco)",
             valor: 5.00,
-            descricao: "Degradê nervoso nos zovo, com direito a lambida"
+            descricao: "Degradê nervoso nos zovo, com direito a lambida",
+            funcionarios: ["Marcão", "Zé do Corte"],
+            tempo: "15 min"
         },
         {
             servico: "Corte no pulso",
             valor: 990.00,
-            descricao: "Muito arriscado eu ser pego, cobro caro"
-        },
+            descricao: "Muito arriscado eu ser pego, cobro caro",
+            funcionarios: ["Anônimo", "Sr. Sombrio"],
+            tempo: "15 min"
+        }
     ]
 
-    const handleTimeClick = (time) => {
-        setSelectedTime(time);
-        console.log(`Horário selecionado: ${time}`);
-    };
+
 
     const days = [];
     for (let day = start; day <= end; day = addDays(day, 1)) {
         days.push(day);
     }
-    console.log(selectedDate)
 
+    const handleServiceClick = () => {
+        if (selectedService === null) {
+            setAlertModalService(true);
+            return;
+        }
+        setModalService(false);
+        setModalAtendente(true);
+    }
+
+    const handleAtendente = () => {
+        if (selectedBarber === null) {
+            setAlertModalAtendente(true);
+            return;
+        }
+        console.log(`Atendente ${servicos[selectedService].funcionarios[selectedBarber]} escolhido`);
+        console.log(`Serviço ${servicos[selectedService].servico} escolhido`);
+        console.log(`Valor ${servicos[selectedService].valor} escolhido`);
+        setModalAtendente(false);
+        setModalAgenda(true);
+    }
 
     const handleToggle = (index) => {
         setExpandedIndex(prev => (prev === index ? null : index));
+    };
+
+
+    const handleTimeClick = (time) => {
+        setSelectedTime(time);
+        console.log(`Horário selecionado: ${time}`);
     };
 
     const handlePrevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
@@ -132,12 +179,32 @@ export default function CalendarCarousel() {
 
     return (
         <>
+            {AlertModalService && (
+                <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center flex-col z-[99]">
+                    <div className="flex items-center justify-center flex-col bg-white rounded-lg shadow-lg w-[300px] h-[400px]">
+                        <h2 className="text-black text-2xl font-bold text-center mb-4 p-[30px] ">SERVIÇOS</h2>
+                        <p className='text-black text-2xl font-bold text-center mb-4 p-[30px] '>Selecione um serviço, por favor</p>
+                        <button className='rounded-[5px] w-[100px] h-[50px] bg-blue-600' onClick={() => setAlertModalService(false)}>Ok</button>
+                    </div>
+                </div>
+            )}
+
+            {AlertModalAtendente && (
+                <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center flex-col z-[99]">
+                    <div className="flex items-center justify-center flex-col bg-white rounded-lg shadow-lg w-[300px] h-[300px]">
+                        <h2 className="text-black text-2xl font-bold text-center mb-4 p-[10px] ">ATENDENTE</h2>
+                        <p className='text-black text-2xl font-bold text-center mb-4 p-[10px]'>Selecione um atendente, por favor</p>
+                        <button className='rounded-[5px] w-[100px] h-[50px] bg-blue-600' onClick={() => setAlertModalAtendente(false)}>Ok</button>
+                    </div>
+                </div>
+            )}
 
             {!!modalService && (
-
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col">
                     <div className="bg-black p-4 rounded-lg shadow-lg w-full h-full overflow-auto">
-                        <h2 className="text-white text-2xl font-bold text-center mb-4 p-[30px]">Serviços</h2>
+                        <h2 className="text-white text-2xl font-bold text-center p-[30px]">Serviços</h2>
+                        <hr className='text-gray-600' />
+                        <h2 className='text-center text-gray-600'>Selecione o serviço que deseja:</h2>
                         {servicos.map((item, index) => (
                             <div
                                 key={index}
@@ -145,8 +212,8 @@ export default function CalendarCarousel() {
                             >
                                 <div
                                     className={`w-full bg-[#111111] text-white rounded-[5px] p-[20px] gap-4 
-                                    ${selectedService === index ? 'bg-blue-600' : ''}`}  // Adiciona a classe azul quando o serviço for selecionado
-                                    onClick={() => setSelectedService(index)}  // Salva o serviço selecionado
+                                    ${selectedService === index ? 'bg-blue-600' : ''}`}
+                                    onClick={() => setSelectedService(index)}
                                 >
                                     <div className="flex pb-2 flex-row justify-between">
                                         <span className="p-[5px] w-[200px]">{item.servico}</span>
@@ -169,7 +236,29 @@ export default function CalendarCarousel() {
                             </div>
                         ))}
                     </div>
-                    <button className='w-full h-[80px] bg-blue-600' onClick={() => setModalService(false)}>Escolher</button>
+                    <button className='w-full h-[80px] bg-blue-600' onClick={() => handleServiceClick()}>Escolher</button>
+                </div>
+            )}
+
+
+            {!!modalAtendente && selectedService !== null && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col">
+                    <div className="bg-black p-4 rounded-lg shadow-lg w-full h-full flex items-center flex-col">
+                        <h2 className="text-white text-2xl font-bold text-center p-[30px]">Atendentes</h2>
+                        <hr className='w-full text-gray-600' />
+                        <h2 className='text-center text-gray-600 mb-[20px]'>Selecione o atendente que deseja:</h2>
+
+                        {servicos[selectedService].funcionarios.map((atendente, i) => (
+                            <div
+                                key={i}
+                                className={`bg-[#111111] text-white rounded-[5px] p-[20px] m-2 w-full flex justify-center ${selectedBarber === i ? 'bg-blue-600' : ''}`}
+                                onClick={() => setSelectedBarber(i)}
+                            >
+                                <span>{atendente}</span>
+                            </div>
+                        ))}
+                    </div>
+                    <button className='w-full h-[80px] bg-blue-600' onClick={() => handleAtendente()}>Escolher</button>
                 </div>
             )}
 
@@ -208,46 +297,71 @@ export default function CalendarCarousel() {
                     </div>
                 </div>
 
-
                 {/* Horários da data selecionada */}
-                <div className="mt-4 px-4 text-white">
-                    <h2 className="text-md font-semibold mb-2">
-                        Horários disponíveis para {format(selectedDate, 'dd/MM/yyyy')}
-                    </h2>
-                    <div className="flex flex-wrap gap-2 min-h-[80px] just">
-                        {(
-                            mockScheduleData.find(item =>
-                                item.date === format(selectedDate, 'yyyy-MM-dd')
-                            )?.times || ['Nenhum horário disponível']
-                        ).map((time, i) => (
-                            <div
-                                key={i}
-                                className={`px-3 py-2 rounded-[5px] text-sm cursor-pointer
-                    ${selectedTime === time ? 'bg-blue-600 text-white' : 'text-gray-200'}`}
-                                onClick={() => handleTimeClick(time)}
-                            >
-                                {time}
-                            </div>
-                        ))}
+                {!!ModalAgenda && (
+                    <div className="mt-6 px-4 text-white flex flex-col items-center">
+                        <h2 className="text-lg font-semibold mb-4 text-center">
+                            Horários disponíveis para {format(selectedDate, 'dd/MM/yyyy')}
+                        </h2>
+
+                        <div className="flex flex-wrap gap-3 min-h-[70px] justify-center items-start">
+                            {(
+                                mockScheduleData.find(item =>
+                                    item.date === format(selectedDate, 'yyyy-MM-dd')
+                                )?.times || ['Nenhum horário disponível']
+                            ).map((time, i) => (
+                                <div
+                                    key={i}
+                                    className={`px-4 py-2 rounded-xl text-sm font-medium cursor-pointer border transition-all duration-200
+                                    ${selectedTime === time
+                                            ? 'bg-blue-600 text-white border-blue-400 shadow-md'
+                                            : 'text-gray-200 border-gray-600 hover:border-gray-400 hover:text-white'
+                                        }`}
+                                    onClick={() => handleTimeClick(time)}
+                                >
+                                    {time}
+                                </div>
+                            ))}
+                        </div>
+                        <button className='flex bg-blue-600 p-[10px] rounded-[10px]'>Teste</button>
                     </div>
-                </div>
+                )}
 
-                {/* Selecionar o serviço que deseja agendar */}
-                {/* 
-            <div className="flex items-center justify-center mt-[50px]">
-                <div className="w-[300px] h-auto bg-[#111111] text-white rounded-[5px] p-[20px] flex flex-col">
-                    <span className='p-[5px]'>Atendente: </span>
 
-                    <hr className='h-[1px] w-full bg-gray-500 border-none my-2' />
 
-                    <span className='p-[5px]'>Serviço: </span>
-                    <span className='p-[5px]'>Descrição: </span>
-                    <span className='p-[5px]'>Valor: </span>
-                    <span className='p-[5px]'>Tempo médio: </span>
+                {/* Resumo do agendamento */}
+                {/* {servicos[selectedService] && selectedBarber !== null && (
+                    <div className="flex items-center justify-center mt-[50px] flex-col">
+                        <div className="w-[300px] h-auto bg-[#111111] text-white rounded-[5px] p-[20px] flex flex-col space-y-2">
+                            
+                            <div className=' p-[5px] flex justify-between'>
+                                <span className=''>Atendente:</span>
+                                <span>{servicos[selectedService].funcionarios[selectedBarber]}</span>
+                            </div>
 
-                    <button className='bg-blue-600 w-[100px] h-[30px] rounded-[5px] mt-[20px]'>Agendar</button>
-                </div>
-            </div> */}
+                            <hr className=' h-[1px] w-full bg-gray-500 border-none my-2' />
+
+                            <div className='p-[5px] flex justify-between'>
+                                <span>Serviço :</span>
+                                <span className='max-w-[130px] '>{servicos[selectedService].servico}</span>
+                            </div>
+
+                            <div className='p-[5px] flex justify-between'>
+                                <span>Valor :</span>
+                                <span>R$ {servicos[selectedService].valor.toFixed(2)}</span>
+                            </div>
+
+                            <div className='p-[5px] flex justify-between'>
+                                <span>Tempo médio :</span>
+                                <span>{servicos[selectedService].tempo}</span>
+                            </div>
+
+                            <button className='max-h-[35px] bg-blue-600 p-[5px] rounded-[7px]' onClick={() => setModalService(true)}>Editar</button>
+                        </div>
+                        <button className='bg-blue-600 max-w-[300px] w-full h-[40px] rounded-[5px] mt-[20px]'>Confirmar Agendamento</button>
+                    </div>
+                )} */}
+
 
             </div>
         </>
