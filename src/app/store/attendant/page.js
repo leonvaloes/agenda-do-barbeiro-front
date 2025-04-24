@@ -1,8 +1,7 @@
 'use client'
 
 import Table from "@/components/Table/Table";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencilAlt, faTrash } from "@fortawesome/free-solid-svg-icons";
+
 import ActionButtons from "@/components/ui/ActionButton";
 
 export default function Attendant() {

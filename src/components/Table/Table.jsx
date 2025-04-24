@@ -6,7 +6,7 @@ function Table({ data, columns, setSelectedLine }) {
   const isListValid = Array.isArray(data) && data.length > 0;
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-black/[.08] dark:border-white/[.1] shadow-sm">
+    <div className="max-h-[100vh] overflow-x-auto rounded-lg border border-black/[.08] dark:border-white/[.1] shadow-sm">
       <table className="w-full text-sm sm:text-base text-left border-collapse">
         {isListValid ? (
           <>

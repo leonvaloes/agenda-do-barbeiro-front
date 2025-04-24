@@ -328,6 +328,9 @@ export default function CalendarCarousel() {
             <div className='flex justify-center items-center w-full h-full'>
                 {servicos[selectedService] && selectedBarber !== null && (
                     <div className="flex items-center justify-center mt-[50px] flex-col">
+                        <h2 className="text-white text-2xl font-bold text-center p-[30px]">Atendentes</h2>
+                        <hr className=' w-full border-gray-600'/>
+                        <h2 className='text-center text-gray-600 mb-[20px]'>Verifique as informações do agendamento</h2>
                         <div className="w-[300px] h-auto bg-[#111111] text-white rounded-[5px] p-[20px] flex flex-col space-y-2">
 
                             <div className=' p-[5px] flex justify-between'>
@@ -360,7 +363,7 @@ export default function CalendarCarousel() {
                             <div className='p-[5px] flex justify-between'>
                                 <span>Hora :</span>
                                 <span>{selectedTime}</span>
-                                
+
                             </div>
 
 
