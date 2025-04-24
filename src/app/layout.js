@@ -8,7 +8,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-br">
       <body className={inter.className}>
-        <Layout />
         <main className="w-full">{children}</main>
       </body>
     </html>
