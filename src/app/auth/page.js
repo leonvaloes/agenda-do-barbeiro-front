@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { ToastContainer } from "react-toastify"; // Importando o container
-import "react-toastify/dist/ReactToastify.css";  // Importando o estilo do Toast
 import LoginForm from "@/components/form/auth/LoginForm";
 import RegisterForm from "@/components/form/auth/RegisterForm";
 import FadeSwitch from "@/components/ui/FadeSwitch";
@@ -24,7 +22,6 @@ export default function AuthPage() {
         </div>
       </div>
       
-      <ToastContainer />
     </>
   );
 }

@@ -5,6 +5,11 @@ import { format, startOfMonth, endOfMonth, addDays, subMonths, addMonths, isSame
 import { ptBR } from 'date-fns/locale';
 import { daysInWeek } from 'date-fns/constants';
 
+import Button from '../button/button';
+
+import { toast } from "react-toastify";
+
+
 export default function CalendarCarousel() {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState(null);
@@ -18,10 +23,6 @@ export default function CalendarCarousel() {
 
     const [selectedService, setSelectedService] = useState(null);
     const [selectedBarber, setSelectedBarber] = useState(null);
-
-    const [AlertModalService, setAlertModalService] = useState(false);
-    const [AlertModalAtendente, setAlertModalAtendente] = useState(false);
-
 
     const today = new Date();
     const start = today > startOfMonth(currentMonth) ? today : startOfMonth(currentMonth);
@@ -145,7 +146,7 @@ export default function CalendarCarousel() {
 
     const handleServiceClick = () => {
         if (selectedService === null) {
-            setAlertModalService(true);
+            toast.error("Escolha um serviço!", { position: "top-center" });
             return;
         }
         setModalService(false);
@@ -154,7 +155,7 @@ export default function CalendarCarousel() {
 
     const handleAtendente = () => {
         if (selectedBarber === null) {
-            setAlertModalAtendente(true);
+            toast.error("Escolha um Atendente!", { position: "top-center" });
             return;
         }
         console.log(`Atendente ${servicos[selectedService].funcionarios[selectedBarber]} escolhido`);
@@ -171,33 +172,23 @@ export default function CalendarCarousel() {
 
     const handleTimeClick = (time) => {
         setSelectedTime(time);
-        console.log(`Horário selecionado: ${time}`);
     };
+
+    const handleSelectTime = () => {
+        if (selectedTime === null) {
+            toast.error("Escolha um horário!", { position: "top-center" });
+            return;
+        }
+
+        setModalAgenda(false);
+        console.log(`Agendado para ${format(selectedDate, 'dd/MM/yyyy')} às ${selectedTime}`);
+    }
 
     const handlePrevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
     const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
 
     return (
         <>
-            {AlertModalService && (
-                <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center flex-col z-[99]">
-                    <div className="flex items-center justify-center flex-col bg-white rounded-lg shadow-lg w-[300px] h-[400px]">
-                        <h2 className="text-black text-2xl font-bold text-center mb-4 p-[30px] ">SERVIÇOS</h2>
-                        <p className='text-black text-2xl font-bold text-center mb-4 p-[30px] '>Selecione um serviço, por favor</p>
-                        <button className='rounded-[5px] w-[100px] h-[50px] bg-blue-600' onClick={() => setAlertModalService(false)}>Ok</button>
-                    </div>
-                </div>
-            )}
-
-            {AlertModalAtendente && (
-                <div className="fixed inset-0 bg-opacity-50 backdrop-blur-sm flex items-center justify-center flex-col z-[99]">
-                    <div className="flex items-center justify-center flex-col bg-white rounded-lg shadow-lg w-[300px] h-[300px]">
-                        <h2 className="text-black text-2xl font-bold text-center mb-4 p-[10px] ">ATENDENTE</h2>
-                        <p className='text-black text-2xl font-bold text-center mb-4 p-[10px]'>Selecione um atendente, por favor</p>
-                        <button className='rounded-[5px] w-[100px] h-[50px] bg-blue-600' onClick={() => setAlertModalAtendente(false)}>Ok</button>
-                    </div>
-                </div>
-            )}
 
             {!!modalService && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col">
@@ -236,7 +227,7 @@ export default function CalendarCarousel() {
                             </div>
                         ))}
                     </div>
-                    <button className='w-full h-[80px] bg-blue-600' onClick={() => handleServiceClick()}>Escolher</button>
+                    <Button onClick={() => handleServiceClick()}>Continuar</Button>
                 </div>
             )}
 
@@ -258,82 +249,87 @@ export default function CalendarCarousel() {
                             </div>
                         ))}
                     </div>
-                    <button className='w-full h-[80px] bg-blue-600' onClick={() => handleAtendente()}>Escolher</button>
+                    <Button onClick={() => handleAtendente()}></Button>
                 </div>
             )}
 
 
-            <div className="w-full overflox-x-auto scrollbar-hide max-w-[410px]">
+            {/* Horários da data selecionada */}
+            {!!ModalAgenda && (
+                <div className='fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col'>
+                    <div className="fixed w-full overflox-x-auto scrollbar-hide max-w-[411px] z-50">
 
-                {/* Header */}
-                <div className="flex items-center justify-between px-4 py-2 text-white overflox-x-auto scrollbar-hide bg-[#111111]">
-                    <button onClick={handlePrevMonth} className="text-xl">&#9204;</button>
+                        {/* Header */}
+                        <div className="flex items-center justify-between px-4 py-2 text-white overflox-x-auto scrollbar-hide bg-[#111111]">
+                            <button onClick={handlePrevMonth} className="text-xl">&#9204;</button>
 
-                    <div className="text-lg">
-                        {format(currentMonth, "MMMM yyyy", { locale: ptBR })}
-                    </div>
+                            <div className="text-lg">
+                                {format(currentMonth, "MMMM yyyy", { locale: ptBR })}
+                            </div>
 
-                    <button onClick={handleNextMonth} className="text-xl">&#9205;</button>
-                </div>
-
-                {/* Dias */}
-                <div className="w-full overflow-x-auto scrollbar-hide py-[4px] bg-[#111111]">
-                    <div className="flex space-x-1 px-4 w-max">
-                        {days.map((day, idx) => {
-                            const isSelected = isSameDay(day, selectedDate);
-                            return (
-                                <button
-                                    key={idx}
-                                    onClick={() => setSelectedDate(day)}
-                                    className={`flex flex-col items-center px-1 py-5 rounded-[5px] min-w-[60px] 
-                                    ${isSelected ? 'bg-blue-600 text-white' : 'text-gray-200'}`}
-                                >
-                                    <span className="text-lg font-bold">{format(day, 'dd')}</span>
-                                    <span className="text-sm">{format(day, 'EEEEEE', { locale: ptBR })}</span>
-
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* Horários da data selecionada */}
-                {!!ModalAgenda && (
-                    <div className="mt-6 px-4 text-white flex flex-col items-center">
-                        <h2 className="text-lg font-semibold mb-4 text-center">
-                            Horários disponíveis para {format(selectedDate, 'dd/MM/yyyy')}
-                        </h2>
-
-                        <div className="flex flex-wrap gap-3 min-h-[70px] justify-center items-start">
-                            {(
-                                mockScheduleData.find(item =>
-                                    item.date === format(selectedDate, 'yyyy-MM-dd')
-                                )?.times || ['Nenhum horário disponível']
-                            ).map((time, i) => (
-                                <div
-                                    key={i}
-                                    className={`px-4 py-2 rounded-xl text-sm font-medium cursor-pointer border transition-all duration-200
-                                    ${selectedTime === time
-                                            ? 'bg-blue-600 text-white border-blue-400 shadow-md'
-                                            : 'text-gray-200 border-gray-600 hover:border-gray-400 hover:text-white'
-                                        }`}
-                                    onClick={() => handleTimeClick(time)}
-                                >
-                                    {time}
-                                </div>
-                            ))}
+                            <button onClick={handleNextMonth} className="text-xl">&#9205;</button>
                         </div>
-                        <button className='flex bg-blue-600 p-[10px] rounded-[10px]'>Teste</button>
+
+                        {/* Dias */}
+                        <div className="w-full overflow-x-auto scrollbar-hide py-[4px] bg-[#111111]">
+                            <div className="flex space-x-1 px-4 w-max">
+                                {days.map((day, idx) => {
+                                    const isSelected = isSameDay(day, selectedDate);
+                                    return (
+                                        <button
+                                            key={idx}
+                                            onClick={() => setSelectedDate(day)}
+                                            className={`flex flex-col items-center px-1 py-5 rounded-[5px] min-w-[60px] 
+                                            ${isSelected ? 'bg-blue-600 text-white' : 'text-gray-200'}`}
+                                        >
+                                            <span className="text-lg font-bold">{format(day, 'dd')}</span>
+                                            <span className="text-sm">{format(day, 'EEEEEE', { locale: ptBR })}</span>
+
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="mt-6 px-4 text-white flex flex-col items-center min-h-[670px]">
+                            <h2 className="text-lg font-semibold mb-4 text-center">
+                                Horários disponíveis para {format(selectedDate, 'dd/MM/yyyy')}
+                            </h2>
+
+                            <div className="flex flex-wrap gap-3 min-h-[70px] justify-center items-start ">
+                                {(
+                                    mockScheduleData.find(item =>
+                                        item.date === format(selectedDate, 'yyyy-MM-dd')
+                                    )?.times || ['Nenhum horário disponível']
+                                ).map((time, i) => (
+                                    <div
+                                        key={i}
+                                        className={`px-4 py-2 rounded-xl text-sm font-medium cursor-pointer border transition-all duration-200
+                                    ${selectedTime === time
+                                                ? 'bg-blue-600 text-white border-blue-400 shadow-md'
+                                                : 'text-gray-200 border-gray-600 hover:border-gray-400 hover:text-white'
+                                            }`}
+                                        onClick={() => handleTimeClick(time)}
+                                    >
+                                        {time}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <Button onClick={() => handleSelectTime()}> Continuar </Button>
                     </div>
-                )}
+                </div>
+            )}
 
 
 
-                {/* Resumo do agendamento */}
-                {/* {servicos[selectedService] && selectedBarber !== null && (
+            {/* Resumo do agendamento */}
+
+            <div className='flex justify-center items-center w-full h-full'>
+                {servicos[selectedService] && selectedBarber !== null && (
                     <div className="flex items-center justify-center mt-[50px] flex-col">
                         <div className="w-[300px] h-auto bg-[#111111] text-white rounded-[5px] p-[20px] flex flex-col space-y-2">
-                            
+
                             <div className=' p-[5px] flex justify-between'>
                                 <span className=''>Atendente:</span>
                                 <span>{servicos[selectedService].funcionarios[selectedBarber]}</span>
@@ -356,14 +352,28 @@ export default function CalendarCarousel() {
                                 <span>{servicos[selectedService].tempo}</span>
                             </div>
 
+                            <div className='p-[5px] flex justify-between'>
+                                <span>Data :</span>
+                                <span>{format(selectedDate, 'dd/MM/yyyy')}</span>
+                            </div>
+
+                            <div className='p-[5px] flex justify-between'>
+                                <span>Hora :</span>
+                                <span>{selectedTime}</span>
+                                
+                            </div>
+
+
                             <button className='max-h-[35px] bg-blue-600 p-[5px] rounded-[7px]' onClick={() => setModalService(true)}>Editar</button>
                         </div>
                         <button className='bg-blue-600 max-w-[300px] w-full h-[40px] rounded-[5px] mt-[20px]'>Confirmar Agendamento</button>
                     </div>
-                )} */}
-
-
+                )}
             </div>
+
+
+
+
         </>
 
     );
