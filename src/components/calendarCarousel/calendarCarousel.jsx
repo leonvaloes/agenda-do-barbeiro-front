@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { format, startOfMonth, endOfMonth, addDays, subMonths, addMonths, isSameDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { daysInWeek } from 'date-fns/constants';
@@ -8,7 +8,6 @@ import { daysInWeek } from 'date-fns/constants';
 import Button from '../button/button';
 
 import { toast } from "react-toastify";
-
 
 export default function CalendarCarousel() {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -137,6 +136,29 @@ export default function CalendarCarousel() {
         }
     ]
 
+    async function getServices() {
+        const response = await fetch(`http://localhost:3000/empresa/listServ/1`, {
+            method: 'GET',  // Método GET
+            headers: {
+                'Content-Type': 'application/json'  // Tipo de conteúdo sendo enviado
+            },
+        });
+    
+        if (!response.ok) {
+            console.log(response);
+            throw new Error('Erro ao buscar serviços');  // Caso a resposta não seja ok
+        }
+    
+        const data = await response.json();  // Converte a resposta para JSON
+        console.log(data);  // Exibe os dados no console
+        return data;
+    }
+    
+    useEffect(() => {
+        getServices();  // Chama a função de busca quando o componente for montado
+    }, []);
+    
+    
 
 
     const days = [];
@@ -322,14 +344,13 @@ export default function CalendarCarousel() {
             )}
 
 
-
             {/* Resumo do agendamento */}
 
             <div className='flex justify-center items-center w-full h-full'>
                 {servicos[selectedService] && selectedBarber !== null && (
                     <div className="flex items-center justify-center mt-[50px] flex-col">
                         <h2 className="text-white text-2xl font-bold text-center p-[30px]">Atendentes</h2>
-                        <hr className=' w-full border-gray-600'/>
+                        <hr className=' w-full border-gray-600' />
                         <h2 className='text-center text-gray-600 mb-[20px]'>Verifique as informações do agendamento</h2>
                         <div className="w-[300px] h-auto bg-[#111111] text-white rounded-[5px] p-[20px] flex flex-col space-y-2">
 
