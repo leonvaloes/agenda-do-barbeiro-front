@@ -21,7 +21,11 @@ export default function CalendarCarousel() {
     const [ModalAgenda, setModalAgenda] = useState(false);
 
     const [selectedService, setSelectedService] = useState(null);
-    const [selectedBarber, setSelectedBarber] = useState(null);
+    const [SelectedAtendente, setSelectedAtendente] = useState(null);
+
+    const [servicos, setServicos] = useState([]);
+    const [atendentes, setAtendentes] = useState([]);
+
 
     const today = new Date();
     const start = today > startOfMonth(currentMonth) ? today : startOfMonth(currentMonth);
@@ -70,71 +74,26 @@ export default function CalendarCarousel() {
         }
     ];
 
-    const servicos = [
-        {
-            servico: "Corte de cabelo",
-            valor: 30.00,
-            descricao: "Realizo o corte de cabelo que desejar",
-            funcionarios: ["João", "Carlos", "Amanda"],
-            tempo: "30 min"
-        },
-        {
-            servico: "Barba",
-            valor: 20.00,
-            descricao: "Realizo a barba que desejar",
-            funcionarios: ["Carlos", "Eduardo"],
-            tempo: "15 min"
-        },
-        {
-            servico: "Sobrancelha",
-            valor: 15.00,
-            descricao: "Realizo a sobrancelha que desejar",
-            funcionarios: ["Amanda", "Juliana"],
-            tempo: "15 min"
-        },
-        {
-            servico: "Corte de cabelo + Barba",
-            valor: 50.00,
-            descricao: "Realizo o corte de cabelo e barba que desejar",
-            funcionarios: ["João", "Carlos"],
-            tempo: "45 min"
-        },
-        {
-            servico: "Corte de cabelo + Sobrancelha",
-            valor: 35.00,
-            descricao: "Realizo o corte de cabelo e sobrancelha que desejar",
-            funcionarios: ["Amanda", "João"],
-            tempo: "45 min"
-        },
-        {
-            servico: "Barba + Sobrancelha",
-            valor: 25.00,
-            descricao: "Realizo a barba e sobrancelha que desejar",
-            funcionarios: ["Juliana", "Carlos"],
-            tempo: "30 min"
-        },
-        {
-            servico: "Corte de cabelo + Barba + Sobrancelha",
-            valor: 60.00,
-            descricao: "Realizo o corte de cabelo, barba e sobrancelha que desejar",
-            funcionarios: ["João", "Amanda", "Carlos"],
-            tempo: "60 min"
-        },
-        {
-            servico: "Corte de cabelo (do saco)",
-            valor: 5.00,
-            descricao: "Degradê nervoso nos zovo, com direito a lambida",
-            funcionarios: ["Marcão", "Zé do Corte"],
-            tempo: "15 min"
-        },
-        {
-            servico: "Corte no pulso",
-            valor: 990.00,
-            descricao: "Muito arriscado eu ser pego, cobro caro",
-            funcionarios: ["Anônimo", "Sr. Sombrio"],
-            tempo: "15 min"
+    async function getAtendente(servicoId) {
+        const response = await fetch(`http://localhost:3000/atendente/getAtendServ/${servicoId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            console.log(response);
+            throw new Error('Erro ao buscar atendentes');
         }
-    ]
+
+        const data = await response.json();
+        setAtendentes(data);
+        data.forEach(obj => {
+            console.log(obj);
+        });
+        return data;
+    }
 
     async function getServices() {
         const response = await fetch(`http://localhost:3000/empresa/listServ/1`, {
@@ -143,22 +102,25 @@ export default function CalendarCarousel() {
                 'Content-Type': 'application/json'  // Tipo de conteúdo sendo enviado
             },
         });
-    
+
         if (!response.ok) {
             console.log(response);
             throw new Error('Erro ao buscar serviços');  // Caso a resposta não seja ok
         }
-    
+
         const data = await response.json();  // Converte a resposta para JSON
-        console.log(data);  // Exibe os dados no console
+        setServicos(data);
+        data.forEach(obj => {
+            console.log(obj);
+        });
         return data;
     }
-    
+
     useEffect(() => {
         getServices();  // Chama a função de busca quando o componente for montado
     }, []);
-    
-    
+
+
 
 
     const days = [];
@@ -172,16 +134,17 @@ export default function CalendarCarousel() {
             return;
         }
         setModalService(false);
+        getAtendente(servicos[selectedService].id)
         setModalAtendente(true);
     }
 
     const handleAtendente = () => {
-        if (selectedBarber === null) {
+        if (atendentes === null) {
             toast.error("Escolha um Atendente!", { position: "top-center" });
             return;
         }
-        console.log(`Atendente ${servicos[selectedService].funcionarios[selectedBarber]} escolhido`);
-        console.log(`Serviço ${servicos[selectedService].servico} escolhido`);
+        console.log(`Atendente ${atendentes[SelectedAtendente].nome} escolhido`);
+        console.log(`Serviço ${servicos[selectedService].nome} escolhido`);
         console.log(`Valor ${servicos[selectedService].valor} escolhido`);
         setModalAtendente(false);
         setModalAgenda(true);
@@ -211,14 +174,13 @@ export default function CalendarCarousel() {
 
     return (
         <>
-
             {!!modalService && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col">
                     <div className="bg-black p-4 rounded-lg shadow-lg w-full h-full overflow-auto">
                         <h2 className="text-white text-2xl font-bold text-center p-[30px]">Serviços</h2>
                         <hr className='text-gray-600' />
                         <h2 className='text-center text-gray-600'>Selecione o serviço que deseja:</h2>
-                        {servicos.map((item, index) => (
+                        {servicos?.map((item, index) => (
                             <div
                                 key={index}
                                 className="flex items-center justify-center mt-[20px] flex-col cursor-pointer"
@@ -229,8 +191,8 @@ export default function CalendarCarousel() {
                                     onClick={() => setSelectedService(index)}
                                 >
                                     <div className="flex pb-2 flex-row justify-between">
-                                        <span className="p-[5px] w-[200px]">{item.servico}</span>
-                                        <span className="p-[5px]">R${item.valor.toFixed(2)}</span>
+                                        <span className="p-[5px] w-[200px]">{item.nome}</span>
+                                        <span className="p-[5px]">R${item.valor}</span>
                                         <span
                                             className="p-[5px] cursor-pointer"
                                             onClick={() => handleToggle(index)}
@@ -261,15 +223,16 @@ export default function CalendarCarousel() {
                         <hr className='w-full text-gray-600' />
                         <h2 className='text-center text-gray-600 mb-[20px]'>Selecione o atendente que deseja:</h2>
 
-                        {servicos[selectedService].funcionarios.map((atendente, i) => (
+                        {atendentes.map((atendente, i) => (
                             <div
                                 key={i}
-                                className={`bg-[#111111] text-white rounded-[5px] p-[20px] m-2 w-full flex justify-center ${selectedBarber === i ? 'bg-blue-600' : ''}`}
-                                onClick={() => setSelectedBarber(i)}
+                                className={`bg-[#111111] text-white rounded-[5px] p-[20px] m-2 w-full flex justify-center ${SelectedAtendente === i ? 'bg-blue-600' : ''}`}
+                                onClick={() => setSelectedAtendente(i)}
                             >
-                                <span>{atendente}</span>
+                                <span>{atendente.nome}</span> {/* ou atendente.nome, se ele tiver campo nome */}
                             </div>
                         ))}
+
                     </div>
                     <Button onClick={() => handleAtendente()}></Button>
                 </div>
@@ -345,55 +308,57 @@ export default function CalendarCarousel() {
 
 
             {/* Resumo do agendamento */}
+            {servicos && atendentes && selectedDate && selectedTime &&(
+                <div className='flex justify-center items-center w-full h-full'>
+                    {servicos[selectedService] && atendentes !== null && (
+                        <div className="flex items-center justify-center mt-[50px] flex-col">
+                            <h2 className="text-white text-2xl font-bold text-center p-[30px]">Atendentes</h2>
+                            <hr className=' w-full border-gray-600' />
+                            <h2 className='text-center text-gray-600 mb-[20px]'>Verifique as informações do agendamento</h2>
+                            <div className="w-[300px] h-auto bg-[#111111] text-white rounded-[5px] p-[20px] flex flex-col space-y-2">
 
-            <div className='flex justify-center items-center w-full h-full'>
-                {servicos[selectedService] && selectedBarber !== null && (
-                    <div className="flex items-center justify-center mt-[50px] flex-col">
-                        <h2 className="text-white text-2xl font-bold text-center p-[30px]">Atendentes</h2>
-                        <hr className=' w-full border-gray-600' />
-                        <h2 className='text-center text-gray-600 mb-[20px]'>Verifique as informações do agendamento</h2>
-                        <div className="w-[300px] h-auto bg-[#111111] text-white rounded-[5px] p-[20px] flex flex-col space-y-2">
+                                <div className=' p-[5px] flex justify-between'>
+                                    <span className=''>Atendente:</span>
+                                    <span>{atendentes[SelectedAtendente].nome}</span>
+                                </div>
 
-                            <div className=' p-[5px] flex justify-between'>
-                                <span className=''>Atendente:</span>
-                                <span>{servicos[selectedService].funcionarios[selectedBarber]}</span>
+                                <hr className=' h-[1px] w-full bg-gray-500 border-none my-2' />
+
+                                <div className='p-[5px] flex justify-between'>
+                                    <span>Serviço :</span>
+                                    <span className='max-w-[130px] '>{servicos[selectedService].nome}</span>
+                                </div>
+
+                                <div className='p-[5px] flex justify-between'>
+                                    <span>Valor :</span>
+                                    <span>R$ {servicos[selectedService].valor}</span>
+                                </div>
+
+                                <div className='p-[5px] flex justify-between'>
+                                    <span>Tempo médio :</span>
+                                    <span>{servicos[selectedService].tempo_medio} min</span>
+                                </div>
+
+                                <div className='p-[5px] flex justify-between'>
+                                    <span>Data :</span>
+                                    <span>{format(selectedDate, 'dd/MM/yyyy')}</span>
+                                </div>
+
+                                <div className='p-[5px] flex justify-between'>
+                                    <span>Hora :</span>
+                                    <span>{selectedTime}</span>
+
+                                </div>
+
+
+                                <button className='max-h-[35px] bg-blue-600 p-[5px] rounded-[7px]' onClick={() => setModalService(true)}>Editar</button>
                             </div>
-
-                            <hr className=' h-[1px] w-full bg-gray-500 border-none my-2' />
-
-                            <div className='p-[5px] flex justify-between'>
-                                <span>Serviço :</span>
-                                <span className='max-w-[130px] '>{servicos[selectedService].servico}</span>
-                            </div>
-
-                            <div className='p-[5px] flex justify-between'>
-                                <span>Valor :</span>
-                                <span>R$ {servicos[selectedService].valor.toFixed(2)}</span>
-                            </div>
-
-                            <div className='p-[5px] flex justify-between'>
-                                <span>Tempo médio :</span>
-                                <span>{servicos[selectedService].tempo}</span>
-                            </div>
-
-                            <div className='p-[5px] flex justify-between'>
-                                <span>Data :</span>
-                                <span>{format(selectedDate, 'dd/MM/yyyy')}</span>
-                            </div>
-
-                            <div className='p-[5px] flex justify-between'>
-                                <span>Hora :</span>
-                                <span>{selectedTime}</span>
-
-                            </div>
-
-
-                            <button className='max-h-[35px] bg-blue-600 p-[5px] rounded-[7px]' onClick={() => setModalService(true)}>Editar</button>
+                            <button className='bg-blue-600 max-w-[300px] w-full h-[40px] rounded-[5px] mt-[20px]'>Confirmar Agendamento</button>
                         </div>
-                        <button className='bg-blue-600 max-w-[300px] w-full h-[40px] rounded-[5px] mt-[20px]'>Confirmar Agendamento</button>
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
+            )}
+
 
 
 
