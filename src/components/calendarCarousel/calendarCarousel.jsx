@@ -23,8 +23,14 @@ export default function CalendarCarousel() {
     const [selectedService, setSelectedService] = useState(null);
     const [SelectedAtendente, setSelectedAtendente] = useState(null);
 
+    const [Hours, setHours] = useState([]);
+
     const [servicos, setServicos] = useState([]);
     const [atendentes, setAtendentes] = useState([]);
+    const [atendenteId, setAtendenteId] = useState();
+
+    const handlePrevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
+    const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
 
 
     const today = new Date();
@@ -116,10 +122,50 @@ export default function CalendarCarousel() {
         return data;
     }
 
-    useEffect(() => {
-        getServices();  // Chama a função de busca quando o componente for montado
-    }, []);
+    async function getHours(data) {
+        setSelectedDate(data);
+        console.log("id passado: ", atendenteId);
+        console.log("data nao formatada: ", data);
+        data = data.toISOString().split('T')[0];
+        console.log("data formatada: ", data);
 
+        const response = await fetch(`http://localhost:3000/atendente/getHours/${atendenteId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ data }) // Corrigi aqui também, pra enviar { data }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); // <- lê erro como texto
+            console.error("Erro no backend:", errorText);
+            throw new Error('Erro ao buscar horários');
+        }
+
+        const result = await response.json();
+        setHours(result);
+        console.log("HORARIO DA DATA: ", data, result);
+        return result;
+    }
+
+
+    async function getIdAtendente(UserId) {
+        const response = await fetch(`http://localhost:3000/atendente/getIdAtendente/${UserId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            console.log(response);
+            throw new Error('Erro ao buscar id do atendente');
+        }
+
+        const result = await response.json();
+        setAtendenteId(result.id);
+    }
 
 
 
@@ -143,11 +189,11 @@ export default function CalendarCarousel() {
             toast.error("Escolha um Atendente!", { position: "top-center" });
             return;
         }
-        console.log(`Atendente ${atendentes[SelectedAtendente].nome} escolhido`);
-        console.log(`Serviço ${servicos[selectedService].nome} escolhido`);
-        console.log(`Valor ${servicos[selectedService].valor} escolhido`);
         setModalAtendente(false);
+        getIdAtendente(atendentes[SelectedAtendente].id);
+        
         setModalAgenda(true);
+
     }
 
     const handleToggle = (index) => {
@@ -169,8 +215,16 @@ export default function CalendarCarousel() {
         console.log(`Agendado para ${format(selectedDate, 'dd/MM/yyyy')} às ${selectedTime}`);
     }
 
-    const handlePrevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
-    const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
+
+    useEffect(() => {
+        getServices();  // Chama a função de busca quando o componente for montado
+    }, []);
+
+    useEffect(()=>{
+        const date= new Date();
+        getHours(date)
+        console.log("PASSOU AQI EM PAIZAO")
+    },[atendenteId])
 
     return (
         <>
@@ -263,7 +317,7 @@ export default function CalendarCarousel() {
                                     return (
                                         <button
                                             key={idx}
-                                            onClick={() => setSelectedDate(day)}
+                                            onClick={() => getHours(day)}
                                             className={`flex flex-col items-center px-1 py-5 rounded-[5px] min-w-[60px] 
                                             ${isSelected ? 'bg-blue-600 text-white' : 'text-gray-200'}`}
                                         >
@@ -281,26 +335,36 @@ export default function CalendarCarousel() {
                                 Horários disponíveis para {format(selectedDate, 'dd/MM/yyyy')}
                             </h2>
 
-                            <div className="flex flex-wrap gap-3 min-h-[70px] justify-center items-start ">
-                                {(
-                                    mockScheduleData.find(item =>
-                                        item.date === format(selectedDate, 'yyyy-MM-dd')
-                                    )?.times || ['Nenhum horário disponível']
-                                ).map((time, i) => (
-                                    <div
-                                        key={i}
-                                        className={`px-4 py-2 rounded-xl text-sm font-medium cursor-pointer border transition-all duration-200
-                                    ${selectedTime === time
-                                                ? 'bg-blue-600 text-white border-blue-400 shadow-md'
-                                                : 'text-gray-200 border-gray-600 hover:border-gray-400 hover:text-white'
-                                            }`}
-                                        onClick={() => handleTimeClick(time)}
-                                    >
-                                        {time}
-                                    </div>
-                                ))}
+                            <div className="flex flex-wrap gap-3 min-h-[70px] justify-center items-start">
+                                {
+                                    Hours.filter(item =>
+                                        format(new Date(item.data_hora), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd')
+                                    ).map((item, i) => {
+                                        const timeObj = new Date(item.data_hora);
+                                        const formattedTime = timeObj.toLocaleTimeString('pt-BR', {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                        });
+
+                                        return (
+                                            <div
+                                                key={i}
+                                                className={`px-4 py-2 rounded-xl text-sm font-medium cursor-pointer border transition-all duration-200
+                                                    min-h-[50px] min-w-[80px] flex justify-center items-center
+                                                    ${selectedTime === item.data_hora
+                                                        ? 'bg-blue-600 text-white border-blue-400 shadow-md'
+                                                        : 'text-gray-200 border-gray-600 hover:border-gray-400 hover:text-white'
+                                                    }`}
+                                                onClick={() => handleTimeClick(item.data_hora)}
+                                            >
+                                                {formattedTime}
+                                            </div>
+                                        );
+                                    })
+                                }
                             </div>
                         </div>
+
                         <Button onClick={() => handleSelectTime()}> Continuar </Button>
                     </div>
                 </div>
@@ -308,7 +372,7 @@ export default function CalendarCarousel() {
 
 
             {/* Resumo do agendamento */}
-            {servicos && atendentes && selectedDate && selectedTime &&(
+            {servicos && atendentes && selectedDate && selectedTime && (
                 <div className='flex justify-center items-center w-full h-full'>
                     {servicos[selectedService] && atendentes !== null && (
                         <div className="flex items-center justify-center mt-[50px] flex-col">
@@ -346,8 +410,9 @@ export default function CalendarCarousel() {
 
                                 <div className='p-[5px] flex justify-between'>
                                     <span>Hora :</span>
-                                    <span>{selectedTime}</span>
-
+                                    <span>
+                                        {new Date(selectedTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
                                 </div>
 
 
