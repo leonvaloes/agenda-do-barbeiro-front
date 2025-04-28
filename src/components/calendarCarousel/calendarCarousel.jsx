@@ -19,11 +19,16 @@ export default function CalendarCarousel() {
     const [modalService, setModalService] = useState(true);
     const [modalAtendente, setModalAtendente] = useState(false);
     const [ModalAgenda, setModalAgenda] = useState(false);
+    const [modalConcluido, setModalConcluido] = useState(false);
+    const [modalCancelado, setModalCancelado] = useState(false);
 
     const [selectedService, setSelectedService] = useState(null);
     const [SelectedAtendente, setSelectedAtendente] = useState(null);
 
     const [Hours, setHours] = useState([]);
+    const [dataFormatada, setDataFormatada] = useState();
+    const [horaFormatada, setHoraFormatada] = useState();
+    const data_hora = `${dataFormatada} ${horaFormatada}`
 
     const [servicos, setServicos] = useState([]);
     const [atendentes, setAtendentes] = useState([]);
@@ -32,56 +37,18 @@ export default function CalendarCarousel() {
     const handlePrevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
     const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
 
-
     const today = new Date();
     const start = today > startOfMonth(currentMonth) ? today : startOfMonth(currentMonth);
     const end = endOfMonth(currentMonth);
 
-    const mockScheduleData = [
-        {
-            date: format(addDays(today, 0), 'yyyy-MM-dd'),
-            times: ['08:00', '09:00', '10:30', '13:00', '14:00', '15:00', '16:00', '17:00']
-        },
-        {
-            date: format(addDays(today, 1), 'yyyy-MM-dd'),
-            times: ['14:00', '15:30']
-        },
-        {
-            date: format(addDays(today, 2), 'yyyy-MM-dd'),
-            times: ['09:00', '13:00', '16:00']
-        },
-        {
-            date: format(addDays(today, 3), 'yyyy-MM-dd'),
-            times: ['11:00']
-        },
-        {
-            date: format(addDays(today, 4), 'yyyy-MM-dd'),
-            times: ['08:30', '12:00', '17:00']
-        },
-        {
-            date: format(addDays(today, 5), 'yyyy-MM-dd'),
-            times: ['10:00', '14:00']
-        },
-        {
-            date: format(addDays(today, 6), 'yyyy-MM-dd'),
-            times: ['09:30', '11:30', '15:30']
-        },
-        {
-            date: format(addDays(today, 7), 'yyyy-MM-dd'),
-            times: ['08:00', '10:00']
-        },
-        {
-            date: format(addDays(today, 8), 'yyyy-MM-dd'),
-            times: ['09:00', '13:00']
-        },
-        {
-            date: format(addDays(today, 9), 'yyyy-MM-dd'),
-            times: ['07:30', '10:30', '14:30']
-        }
-    ];
+    const days = [];
+    for (let day = start; day <= end; day = addDays(day, 1)) {
+        days.push(day);
+    }
+    const URL = "http://localhost:3000"
 
     async function getAtendente(servicoId) {
-        const response = await fetch(`http://localhost:3000/atendente/getAtendServ/${servicoId}`, {
+        const response = await fetch(`${URL}/atendente/getAtendServ/${servicoId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -102,19 +69,19 @@ export default function CalendarCarousel() {
     }
 
     async function getServices() {
-        const response = await fetch(`http://localhost:3000/empresa/listServ/1`, {
-            method: 'GET',  // Método GET
+        const response = await fetch(`${URL}/empresa/listServ/1`, {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json'  // Tipo de conteúdo sendo enviado
+                'Content-Type': 'application/json' 
             },
         });
 
         if (!response.ok) {
             console.log(response);
-            throw new Error('Erro ao buscar serviços');  // Caso a resposta não seja ok
+            throw new Error('Erro ao buscar serviços'); 
         }
 
-        const data = await response.json();  // Converte a resposta para JSON
+        const data = await response.json(); 
         setServicos(data);
         data.forEach(obj => {
             console.log(obj);
@@ -124,21 +91,18 @@ export default function CalendarCarousel() {
 
     async function getHours(data) {
         setSelectedDate(data);
-        console.log("id passado: ", atendenteId);
-        console.log("data nao formatada: ", data);
         data = data.toISOString().split('T')[0];
-        console.log("data formatada: ", data);
 
-        const response = await fetch(`http://localhost:3000/atendente/getHours/${atendenteId}`, {
+        const response = await fetch(`${URL}/atendente/getHours/${atendenteId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ data }) // Corrigi aqui também, pra enviar { data }
+            body: JSON.stringify({ data })
         });
 
         if (!response.ok) {
-            const errorText = await response.text(); // <- lê erro como texto
+            const errorText = await response.text(); 
             console.error("Erro no backend:", errorText);
             throw new Error('Erro ao buscar horários');
         }
@@ -149,9 +113,32 @@ export default function CalendarCarousel() {
         return result;
     }
 
+    const agendar = async () => {
+        const data = {
+            cliente_id: 1,
+            atendente_id: atendenteId,
+            serv_id: servicos[selectedService].id,
+            data_hora: data_hora
+        };
+        console.log(data);
+        const response = await fetch(`${URL}/cliente/agendar`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text(); 
+            setModalCancelado(true)
+            throw new Error("Horário ja agendado ",errorText);
+        }
+        setModalConcluido(true);
+    }
 
     async function getIdAtendente(UserId) {
-        const response = await fetch(`http://localhost:3000/atendente/getIdAtendente/${UserId}`, {
+        const response = await fetch(`${URL}/atendente/getIdAtendente/${UserId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -162,16 +149,8 @@ export default function CalendarCarousel() {
             console.log(response);
             throw new Error('Erro ao buscar id do atendente');
         }
-
         const result = await response.json();
         setAtendenteId(result.id);
-    }
-
-
-
-    const days = [];
-    for (let day = start; day <= end; day = addDays(day, 1)) {
-        days.push(day);
     }
 
     const handleServiceClick = () => {
@@ -191,15 +170,12 @@ export default function CalendarCarousel() {
         }
         setModalAtendente(false);
         getIdAtendente(atendentes[SelectedAtendente].id);
-        
         setModalAgenda(true);
-
     }
 
     const handleToggle = (index) => {
         setExpandedIndex(prev => (prev === index ? null : index));
     };
-
 
     const handleTimeClick = (time) => {
         setSelectedTime(time);
@@ -210,24 +186,51 @@ export default function CalendarCarousel() {
             toast.error("Escolha um horário!", { position: "top-center" });
             return;
         }
-
         setModalAgenda(false);
         console.log(`Agendado para ${format(selectedDate, 'dd/MM/yyyy')} às ${selectedTime}`);
     }
 
-
     useEffect(() => {
-        getServices();  // Chama a função de busca quando o componente for montado
+        getServices();
     }, []);
 
-    useEffect(()=>{
-        const date= new Date();
+    useEffect(() => {
+        const date = new Date();
         getHours(date)
-        console.log("PASSOU AQI EM PAIZAO")
-    },[atendenteId])
+    }, [atendenteId])
+
+    useEffect(() => {
+        setDataFormatada(format(selectedDate, 'yyyy-MM-dd'))
+    }, [selectedDate]);
+
+    useEffect(() => {
+        setHoraFormatada(new Date(selectedTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false }));
+    }, [selectedTime]);
 
     return (
         <>
+            {!!modalConcluido && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col">
+                    <div className="bg-black p-4 rounded-lg shadow-lg w-full h-full flex items-center flex-col">
+                        <h2 className="text-white text-2xl font-bold text-center p-[30px]">Agendamento Concluido!</h2>
+                        <hr className='w-full text-gray-600' />
+                        <h2 className='text-center text-gray-600'>Seu agendamento foi concluido com sucesso!</h2>
+                        <Button onClick={() => setModalConcluido(false)}>Fechar</Button>
+                    </div>
+                </div>
+            )}
+
+            {!!modalCancelado && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col">
+                    <div className="bg-black p-4 rounded-lg shadow-lg w-full h-full flex items-center flex-col">
+                        <h2 className="text-white text-2xl font-bold text-center p-[30px]">Agendamento NÃO concluido!</h2>
+                        <hr className='w-full text-gray-600' />
+                        <h2 className='text-center text-gray-600'>Selecione outro horário para o agendamento!</h2>
+                        <Button onClick={() => setModalCancelado(false)}>Fechar</Button>
+                    </div>
+                </div>
+            )}
+
             {!!modalService && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col">
                     <div className="bg-black p-4 rounded-lg shadow-lg w-full h-full overflow-auto">
@@ -269,31 +272,27 @@ export default function CalendarCarousel() {
                 </div>
             )}
 
-
             {!!modalAtendente && selectedService !== null && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col">
                     <div className="bg-black p-4 rounded-lg shadow-lg w-full h-full flex items-center flex-col">
                         <h2 className="text-white text-2xl font-bold text-center p-[30px]">Atendentes</h2>
                         <hr className='w-full text-gray-600' />
                         <h2 className='text-center text-gray-600 mb-[20px]'>Selecione o atendente que deseja:</h2>
-
                         {atendentes.map((atendente, i) => (
                             <div
                                 key={i}
                                 className={`bg-[#111111] text-white rounded-[5px] p-[20px] m-2 w-full flex justify-center ${SelectedAtendente === i ? 'bg-blue-600' : ''}`}
                                 onClick={() => setSelectedAtendente(i)}
                             >
-                                <span>{atendente.nome}</span> {/* ou atendente.nome, se ele tiver campo nome */}
+                                <span>{atendente.nome}</span>
                             </div>
                         ))}
-
                     </div>
                     <Button onClick={() => handleAtendente()}></Button>
                 </div>
             )}
 
 
-            {/* Horários da data selecionada */}
             {!!ModalAgenda && (
                 <div className='fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col'>
                     <div className="fixed w-full overflox-x-auto scrollbar-hide max-w-[411px] z-50">
@@ -301,11 +300,9 @@ export default function CalendarCarousel() {
                         {/* Header */}
                         <div className="flex items-center justify-between px-4 py-2 text-white overflox-x-auto scrollbar-hide bg-[#111111]">
                             <button onClick={handlePrevMonth} className="text-xl">&#9204;</button>
-
                             <div className="text-lg">
                                 {format(currentMonth, "MMMM yyyy", { locale: ptBR })}
                             </div>
-
                             <button onClick={handleNextMonth} className="text-xl">&#9205;</button>
                         </div>
 
@@ -370,7 +367,6 @@ export default function CalendarCarousel() {
                 </div>
             )}
 
-
             {/* Resumo do agendamento */}
             {servicos && atendentes && selectedDate && selectedTime && (
                 <div className='flex justify-center items-center w-full h-full'>
@@ -405,32 +401,23 @@ export default function CalendarCarousel() {
 
                                 <div className='p-[5px] flex justify-between'>
                                     <span>Data :</span>
-                                    <span>{format(selectedDate, 'dd/MM/yyyy')}</span>
+                                    <span>{dataFormatada}</span>
                                 </div>
 
                                 <div className='p-[5px] flex justify-between'>
                                     <span>Hora :</span>
                                     <span>
-                                        {new Date(selectedTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                        {(horaFormatada)}
                                     </span>
                                 </div>
 
-
                                 <button className='max-h-[35px] bg-blue-600 p-[5px] rounded-[7px]' onClick={() => setModalService(true)}>Editar</button>
                             </div>
-                            <button className='bg-blue-600 max-w-[300px] w-full h-[40px] rounded-[5px] mt-[20px]'>Confirmar Agendamento</button>
+                            <button className='bg-blue-600 max-w-[300px] w-full h-[40px] rounded-[5px] mt-[20px]' onClick={() => agendar()}>Confirmar Agendamento</button>
                         </div>
                     )}
                 </div>
             )}
-
-
-
-
-
         </>
-
     );
 }
-
-
