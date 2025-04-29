@@ -1,25 +1,47 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import funcionario from '../funcionario/funcionario';
+import ModalEditarAtendente from './dadosAtendente/EditAtendentes';
+import ModalFuncionarios from './dadosAtendente/Atendentes';
+
+import { BsCalendar2CheckFill, BsFillPeopleFill,BsCardChecklist, BsFillStarFill,BsCaretRightFill} from "react-icons/bs";
 
 
 function Page() {
 
     const [modalFuncionarios, setModalFuncionarios] = useState(false);
-    const URL = "http://localhost:3000";
 
     const [dadosEmpresa, setDadosEmpresa] = useState(null);
+    const [dadosUserEmpresa, setDadosUserEmpresa] = useState(null);
     const [funcionarios, setFuncionarios] = useState([]);
 
-    const [modalEditAtendente, setModalEditAtendente] = useState(false);
+    const [principal, setPrincipal] = useState(true);
 
-    const [SelectedAtendente, setSelectedAtendente] = useState(null);
-
+    const URL = "http://localhost:3000";
 
     const abrirModalFunc = () => {
         setModalFuncionarios(true);
+        setPrincipal(false);
         fetchGetFuncEmpresa();
+    }
+
+    const fetchGetUserEmpresa = async (id) => {
+        try {
+            const response = await fetch(`${URL}/empresa/getUser/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok)
+                throw new Error('Erro ao buscar dados da empresa');
+
+            const data = await response.json();
+            setDadosUserEmpresa(data[0]);
+        } catch (error) {
+            console.error(error);
+        }
+
     }
 
     const fetchGetDadosEmpresa = async () => {
@@ -30,12 +52,12 @@ function Page() {
                     'Content-Type': 'application/json'
                 }
             });
-
             if (!response.ok)
                 throw new Error('Erro ao buscar dados da empresa');
 
             const data = await response.json();
             setDadosEmpresa(data[0]);
+            fetchGetUserEmpresa(data[0].empresa_user_id)
         } catch (error) {
             console.error(error);
         }
@@ -49,168 +71,138 @@ function Page() {
                     'Content-Type': 'application/json'
                 }
             });
-
             const data = await response.json();
             setFuncionarios(data);
-            console.log(data);
         } catch (error) {
             console.error(error);
         }
     }
-
-
-    const handleUpdateEmpresa = async () => {
-        try {
-            const response = await fetch(`${URL}/empresa/1`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(dadosEmpresa)
-            });
-
-            if (!response.ok)
-                throw new Error('Erro ao atualizar dados da empresa');
-
-            const data = await response.json();
-            setDadosEmpresa(data);
-        } catch (error) {
-            console.error(error);
-        }
-    };
 
     function abrirModalEdit(i) {
         setSelectedAtendente(i);
-        setModalEditAtendente(true);
     }
 
     useEffect(() => {
+        console.log("entrafdp")
         fetchGetDadosEmpresa();
     }, []);
 
     return (
         <>
-            {!!modalEditAtendente && SelectedAtendente !== null && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-51 flex items-center justify-center flex-col">
-                    <div className="bg-[#111111] p-6 rounded-lg shadow-lg w-[90%] max-w-[800px] flex flex-col items-center space-y-6 overflow-y-auto">
-                        <h2 className="text-white text-2xl font-bold text-center">Editar Atendente</h2>
-                        <hr className="w-full border-gray-600" />
+            {!!modalFuncionarios && (
+                <ModalFuncionarios
+                    funcionarios={funcionarios}
+                    onClose={() => { setModalFuncionarios(false), setPrincipal(true) }}
+                    onEdit={abrirModalEdit}
+                />
+            )}
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                            <div className="bg-[#222222] p-4 rounded-md flex flex-col space-y-4">
-                                <div className="flex flex-col">
-                                    <label className="text-gray-400 mb-1">Nome:</label>
-                                    <input
-                                        type="text"
-                                        className="bg-[#333333] text-white p-2 rounded-md"
-                                        value={funcionarios[SelectedAtendente]?.nome || ''}
-                                        onChange={(e) => {
-                                            const novosFuncionarios = [...funcionarios];
-                                            novosFuncionarios[SelectedAtendente].nome = e.target.value;
-                                            setFuncionarios(novosFuncionarios);
-                                        }}
-                                    />
+            {!!principal && (
+                <>
+                    <main className="flex-grow container mx-auto px-4 py-6">
+                        <section className="mb-8">
+                            <h2 className="text-2xl font-bold text-gray-800 mb-1">
+                                Olá, {dadosUserEmpresa?.nome}!
+                            </h2>
+                            <p className="text-gray-600">Gerencie seus funcionários e serviços de forma simples e eficiente.</p>
+                        </section>
+
+                        <section className="grid grid-cols-2 gap-4 mb-8">
+                            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+                                <div className="flex items-center">
+                                    <div className="p-2 bg-blue-100 rounded-full text-blue-500 mr-3">
+                                        <i className="fas fa-users"><BsFillPeopleFill />
+                                        </i>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500">Funcionários</p>
+                                        <h3 className="text-xl font-bold">24</h3>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div className="flex flex-col">
-                                    <label className="text-gray-400 mb-1">CPF:</label>
-                                    <input
-                                        type="text"
-                                        className="bg-[#333333] text-white p-2 rounded-md"
-                                        value={funcionarios[SelectedAtendente]?.cpf || ''}
-                                        onChange={(e) => {
-                                            const novosFuncionarios = [...funcionarios];
-                                            novosFuncionarios[SelectedAtendente].cpf = e.target.value;
-                                            setFuncionarios(novosFuncionarios);
-                                        }}
-                                    />
+                            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+                                <div className="flex items-center">
+                                    <div className="p-2 bg-green-100 rounded-full text-green-500 mr-3">
+                                        <i><BsCardChecklist /></i>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500">Serviços</p>
+                                        <h3 className="text-xl font-bold">12</h3>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div className="flex flex-col">
-                                    <label className="text-gray-400 mb-1">Telefone:</label>
-                                    <input
-                                        type="text"
-                                        className="bg-[#333333] text-white p-2 rounded-md"
-                                        value={funcionarios[SelectedAtendente]?.telefone || ''}
-                                        onChange={(e) => {
-                                            const novosFuncionarios = [...funcionarios];
-                                            novosFuncionarios[SelectedAtendente].telefone = e.target.value;
-                                            setFuncionarios(novosFuncionarios);
-                                        }}
-                                    />
+                            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+                                <div className="flex items-center">
+                                    <div className="p-2 bg-purple-100 rounded-full text-purple-500 mr-3">
+                                        <i><BsCalendar2CheckFill />
+                                        </i>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500">Agendamentos</p>
+                                        <h3 className="text-xl font-bold">156</h3>
+                                    </div>
                                 </div>
+                            </div>
 
-                                <div className="flex justify-between gap-4 mt-4">
-                                    <button className="p-2 rounded-[10px] flex items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0a2 2 0 00-2-2H9a2 2 0 00-2 2m12 0H5" />
-                                        </svg>
-                                    </button>
+                            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+                                <div className="flex items-center">
+                                    <div className="p-2 bg-yellow-100 rounded-full text-yellow-500 mr-3">
+                                        <i ><BsFillStarFill /></i>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500">Avaliação</p>
+                                        <h3 className="text-xl font-bold">4.8</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
 
-                                    <button className=" p-2 rounded-[10px] flex items-center gap-2">
-                                        Salvar
-                                    </button>
+                        <section className="mb-8">
+                            <h3 className="text-lg font-semibold text-gray-800 mb-4">Gerenciamento</h3>
+
+                            <div className="space-y-4">
+                                <button className="w-full py-4 px-6 rounded-xl text-white font-medium flex items-center justify-between transition-all duration-300 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-700 hover:to-blue-500" onClick={() => abrirModalFunc()}>
+                                    <span>Gerenciar Funcionários</span>
+                                    <span><BsCaretRightFill /></span>
+                                </button>
+
+                                <button className="w-full py-4 px-6 rounded-xl text-white font-medium flex items-center justify-between transition-all duration-300 bg-gradient-to-r from-green-500 to-green-700 hover:from-green-700 hover:to-green-500">
+                                    <span>Gerenciar Serviços</span>
+                                    <span><BsCaretRightFill /></span>
+                                </button>
+                            </div>
+                        </section>
+
+                        <section>
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-semibold text-gray-800">Agendamentos Recentes</h3>
+                                <a href="#" className="text-blue-500 text-sm">Ver todos</a>
+                            </div>
+
+                            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                                <div className="divide-y divide-gray-100">
+
+                                </div>
+                            </div>
+                        </section>
+                    </main>
+
+                    <footer className="bg-white border-t border-gray-200 py-4">
+                        <div className="container mx-auto px-4">
+                            <div className="flex justify-between items-center">
+                                <p className="text-gray-500 text-sm">© 2023 AgendaFácil</p>
+                                <div className="flex space-x-4">
+                                    <a href="#" className="text-gray-500 hover:text-blue-500"><i className="fab fa-facebook-f"></i></a>
+                                    <a href="#" className="text-gray-500 hover:text-blue-400"><i className="fab fa-twitter"></i></a>
+                                    <a href="#" className="text-gray-500 hover:text-pink-500"><i className="fab fa-instagram"></i></a>
                                 </div>
                             </div>
                         </div>
-                        <button className="w-full bg-red-900 mt-6 p-2 rounded-md max-w-[300px]" onClick={() => setModalEditAtendente(false)}>Fechar</button>
-                    </div>
-                </div>
+                    </footer>
+                </>
             )}
-
-
-            {!!modalFuncionarios && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col">
-                    <div className="bg-[#111111] p-6 rounded-lg shadow-lg w-[90%] max-w-[800px] flex flex-col items-center space-y-6 overflow-y-auto">
-                        <h2 className="text-white text-2xl font-bold text-center">Funcionários</h2>
-                        <hr className="w-full border-gray-600" />
-                        <h2 className="text-center text-gray-400 mb-4">Selecione o funcionário desejado:</h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
-                            {funcionarios.map((funcionario, i) => (
-                                <div
-                                    key={i}
-                                    className={`bg-[#222222] p-4 rounded-md cursor-pointer flex flex-col space-y-2`}
-                                >
-                                    <div className="flex justify-between border-b border-b-gray-500 mb-[20px]">
-                                        <span className="p-[15px] rounded-[100%] bg-yellow-600"></span>
-                                        <span className="text-white">{funcionario.nome}</span>
-                                    </div>
-
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-400">CPF:</span>
-                                        <span className="text-white">{funcionario.cpf}</span>
-                                    </div>
-
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-400">Telefone:</span>
-                                        <span className="text-white"></span>
-                                    </div>
-
-                                    <div className="flex justify-between">
-                                        <button className="bg-blue-600 p-[10px] rounded-[10px]">Visualizar expediente</button>
-                                        <button className="bg-blue-600 p-[10px] rounded-[10px]" onClick={() => abrirModalEdit(i)}>Editar</button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        <button
-                            className="w-full bg-red-900 mt-6 p-2 rounded-md max-w-[300px]"
-                            onClick={() => setModalFuncionarios(false)}
-                        >
-                            Fechar
-                        </button>
-                    </div>
-                </div>
-            )}
-
-
-
-
-            <h1>Empresa</h1>
-            <button className='bg-blue-600 rounded-[10px] p-[10px]'>Editar dados</button>
-            <button className='bg-blue-600 rounded-[10px] p-[10px]' onClick={() => abrirModalFunc()}>Gerenciar funcionario</button>
         </>
     );
 }
