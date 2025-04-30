@@ -351,7 +351,7 @@ export default function CalendarCarousel() {
                         <span className="text-gray-600 max-w-2xl mx-auto text-center">Escolha um dia e um horário disponivel que for mais conveniente para você.</span>
                     </div>
                     {/* Header */}
-                    <div className="flex items-center justify-center px-4 py-2">
+                    <div className="flex items-center justify-center px-4">
                         <button
                             onClick={handlePrevMonth}
                             className="text-xl p-2 rounded-full hover:bg-gray-200 transition"
