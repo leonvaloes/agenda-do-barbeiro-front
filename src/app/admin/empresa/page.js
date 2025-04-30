@@ -6,7 +6,6 @@ import ModalFuncionarios from './dadosAtendente/Atendentes';
 
 import { BsCalendar2CheckFill, BsFillPeopleFill,BsCardChecklist, BsFillStarFill,BsCaretRightFill} from "react-icons/bs";
 
-
 function Page() {
 
     const [modalFuncionarios, setModalFuncionarios] = useState(false);
@@ -22,8 +21,7 @@ function Page() {
     const abrirModalFunc = () => {
         setModalFuncionarios(true);
         setPrincipal(false);
-        fetchGetFuncEmpresa();
-    }
+    };
 
     const fetchGetUserEmpresa = async (id) => {
         try {
@@ -41,8 +39,7 @@ function Page() {
         } catch (error) {
             console.error(error);
         }
-
-    }
+    };
 
     const fetchGetDadosEmpresa = async () => {
         try {
@@ -76,15 +73,16 @@ function Page() {
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     function abrirModalEdit(i) {
         setSelectedAtendente(i);
-    }
+    };
 
     useEffect(() => {
-        console.log("entrafdp")
+        //fetchGetQtdFunc();
         fetchGetDadosEmpresa();
+        fetchGetFuncEmpresa();
     }, []);
 
     return (
@@ -116,7 +114,7 @@ function Page() {
                                     </div>
                                     <div>
                                         <p className="text-sm text-gray-500">Funcionários</p>
-                                        <h3 className="text-xl font-bold">24</h3>
+                                        <h3 className="text-xl font-bold">{funcionarios?.length}</h3>
                                     </div>
                                 </div>
                             </div>

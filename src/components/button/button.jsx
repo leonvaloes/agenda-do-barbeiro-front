@@ -2,7 +2,7 @@ const Button = ({onClick, childreen}) => {
     return (
         <button 
         onClick={onClick}
-        className="w-full min-h-[80px] bg-blue-600">
+        className="min-w-[100px] min-h-[40px] max-w-[600px] w-full text-white rounded-[4px] bg-blue-500 cursor-pointer">
             {childreen||"Continuar"}
         </button>
     );

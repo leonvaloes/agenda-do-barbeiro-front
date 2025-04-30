@@ -38,28 +38,31 @@ export default function Header() {
       </div>
 
       {menuOpen && (
-        <div className="absolute top-16 left-0 right-0 bg-white shadow-lg rounded-b-lg px-4 py-2">
-          <nav>
-            <ul className="space-y-2">
-              <li>
-                <a href="#" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
-                  Dashboard
-                </a>
-              </li>
-              <li>
-                <a href="#" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
-                  Relatórios
-                </a>
-              </li>
-              <li>
-                <a href="#" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
-                  Sair
-                </a>
-              </li>
-            </ul>
-          </nav>
+        <div className="absolute w-full bg-white shadow-lg rounded-b-lg px-4 py-2">
+          <div className="container mx-auto">
+            <nav>
+              <ul className="space-y-2">
+                <li>
+                  <a href="#" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                    Dashboard
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                    Relatórios
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                    Sair
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
       )}
+
     </header>
   );
 }
