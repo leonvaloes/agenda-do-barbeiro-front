@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react';
-import ModalEditarAtendente from './dadosAtendente/EditAtendentes';
 import ModalFuncionarios from './dadosAtendente/Atendentes';
+import { useRouter } from 'next/navigation';
 
-import { BsCalendar2CheckFill, BsFillPeopleFill,BsCardChecklist, BsFillStarFill,BsCaretRightFill} from "react-icons/bs";
+import { BsCalendar2CheckFill, BsFillPeopleFill, BsCardChecklist, BsFillStarFill, BsCaretRightFill } from "react-icons/bs";
 
 function Page() {
 
@@ -13,6 +13,8 @@ function Page() {
     const [dadosEmpresa, setDadosEmpresa] = useState(null);
     const [dadosUserEmpresa, setDadosUserEmpresa] = useState(null);
     const [funcionarios, setFuncionarios] = useState([]);
+
+    const router = useRouter();
 
     const [principal, setPrincipal] = useState(true);
 
@@ -81,7 +83,6 @@ function Page() {
     };
 
     useEffect(() => {
-        //fetchGetQtdFunc();
         fetchGetDadosEmpresa();
         fetchGetFuncEmpresa();
     }, []);
@@ -167,10 +168,16 @@ function Page() {
                                     <span><BsCaretRightFill /></span>
                                 </button>
 
-                                <button className="w-full py-4 px-6 rounded-xl text-white font-medium flex items-center justify-between transition-all duration-300 bg-gradient-to-r from-green-500 to-green-700 hover:from-green-700 hover:to-green-500">
+                                <button
+                                    className="w-full py-4 px-6 rounded-xl text-white font-medium flex items-center justify-between transition-all duration-300 bg-gradient-to-r from-green-500 to-green-700 hover:from-green-700 hover:to-green-500"
+                                    onClick={() => {
+                                        router.push(`/admin/empresa/dadosAtendente/servicos/${dadosEmpresa?.id}`);
+                                    }}
+                                >
                                     <span>Gerenciar Serviços</span>
                                     <span><BsCaretRightFill /></span>
                                 </button>
+
                             </div>
                         </section>
 

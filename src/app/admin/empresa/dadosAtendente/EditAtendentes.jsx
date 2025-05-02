@@ -15,8 +15,6 @@ export default function ModalEditarAtendente({ funcionario, onClose, onChange })
                 email: funcionario.email || '',
             });
         }
-
-        // Impede scroll do fundo
         document.body.classList.add('overflow-hidden');
         return () => {
             document.body.classList.remove('overflow-hidden');
@@ -27,6 +25,31 @@ export default function ModalEditarAtendente({ funcionario, onClose, onChange })
         const { name, value } = e.target;
         setDados(prev => ({ ...prev, [name]: value }));
     };
+
+    const fetchExcluirFuncionario = (id) => {
+        console.log("id aqui o fdp: ",id);
+        try {
+            fetch(`http://localhost:3000/atendente/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao excluir funcionário');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                window.location.reload();
+                onClose();
+            })
+        } catch (error) {
+            console.error('Erro:', error);
+        };
+    }
 
     const handleSalvar = () => {
         onChange({ ...funcionario, ...dados });
@@ -107,10 +130,10 @@ export default function ModalEditarAtendente({ funcionario, onClose, onChange })
 
                 <div className="bg-gray-50 px-6 py-4 flex justify-between border-t border-gray-200">
                     <button
-                        className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors flex items-center"
-                        onClick={onClose}
+                        className="px-6 py-2 bg-red-500 border border-red-300 text-white rounded-lg hover:bg-gray-100 transition-colors flex items-center"
+                        onClick={() => fetchExcluirFuncionario(funcionario.atendente_id)}
                     >
-                        <BsXLg className="mr-2" /> Cancelar
+                        <BsXLg className="mr-2" /> Excluir
                     </button>
 
                     <button
