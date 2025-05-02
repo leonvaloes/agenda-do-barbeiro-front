@@ -69,6 +69,7 @@ function Page() {
                 }
             });
             const data = await response.json();
+            console.log(data);
             setFuncionarios(data);
         } catch (error) {
             console.error(error);
