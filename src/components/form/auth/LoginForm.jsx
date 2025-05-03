@@ -8,17 +8,36 @@ export default function LoginForm({ onSwitch }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const fetchLogin = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, senha: password }),
+        credentials: 'include'
+      });
+  
+      if (!response.ok) throw new Error('Erro ao fazer login');
+  
+      const data = await response.json();
+      toast.success("Login bem-sucedido!", { position: "top-center" });
+      router.push("/dashboard");  // Altere para a rota que você deseja
+    } catch (e) {
+      toast.error("Erro ao fazer login", { position: "top-center" });
+      console.error(e);
+    }
+  };
+  
+
   const handleLogin = (e) => {
     e.preventDefault();
-
-    // Validação simples
     if (!email || !password) {
       toast.error("Email e Senha são obrigatórios!", { position: "top-center" });
       return;
     }
-
-    console.log("Login:", { email, password });
-    toast.success("Login bem-sucedido!", { position: "top-center" });
+    fetchLogin();
   };
 
   return (

@@ -21,7 +21,7 @@ export default function AuthPage() {
           </FadeSwitch>
         </div>
       </div>
-      
+
     </>
   );
 }
