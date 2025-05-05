@@ -27,7 +27,6 @@ export default function ModalEditarAtendente({ funcionario, onClose, onChange })
     };
 
     const fetchExcluirFuncionario = (id) => {
-        console.log("id aqui o fdp: ",id);
         try {
             fetch(`http://localhost:3000/atendente/${id}`, {
                 method: 'DELETE',
@@ -42,7 +41,6 @@ export default function ModalEditarAtendente({ funcionario, onClose, onChange })
                 return response.json();
             })
             .then(data => {
-                console.log(data);
                 window.location.reload();
                 onClose();
             })
@@ -51,9 +49,35 @@ export default function ModalEditarAtendente({ funcionario, onClose, onChange })
         };
     }
 
+    const fetchAtualizarFuncionario = (id) => {
+        console.log(dados);
+
+        fetch(`http://localhost:3000/atendente/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({...funcionario, ...dados}),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao atualizar funcionário');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Funcionário atualizado:', data);
+            onChange(data); 
+            window.location.reload();
+            onClose();  
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+        });
+    };
+
     const handleSalvar = () => {
-        onChange({ ...funcionario, ...dados });
-        onClose();
+       fetchAtualizarFuncionario(funcionario.atendente_id);
     };
 
     return (
@@ -62,7 +86,7 @@ export default function ModalEditarAtendente({ funcionario, onClose, onChange })
                 <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-6">
                     <div className="flex items-center justify-between">
                         <h2 className="text-2xl font-bold text-white">Editar Atendente</h2>
-                        <button className="text-white hover:text-blue-200 transition-colors" onClick={onClose}>
+                        <button className="text-white hover:text-blue-200 transition-colors cursor-pointer" onClick={onClose}>
                             <BsXLg />
                         </button>
                     </div>
@@ -130,17 +154,17 @@ export default function ModalEditarAtendente({ funcionario, onClose, onChange })
 
                 <div className="bg-gray-50 px-6 py-4 flex justify-between border-t border-gray-200">
                     <button
-                        className="px-6 py-2 bg-red-500 border border-red-300 text-white rounded-lg hover:bg-gray-100 transition-colors flex items-center"
-                        onClick={() => fetchExcluirFuncionario(funcionario.atendente_id)}
+                        className="cursor-pointer bg-red-500 px-6 py-2 border border-red-300 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center"
+                        onClick={() => fetchExcluirFuncionario(funcionario.id)}
                     >
                         <BsXLg className="mr-2" /> Excluir
                     </button>
 
                     <button
                         onClick={handleSalvar}
-                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                        className="cursor-pointer px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
                     >
-                        <BsFillSdCardFill className="mr-2" /> Salvar Alterações
+                        <BsFillSdCardFill className="mr-2 " /> Salvar Alterações
                     </button>
                 </div>
             </div>

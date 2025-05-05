@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import ModalEditarServico from '../ModalEditarServico';
+import ModalNovoServ from './NewService';
 import { useParams } from 'next/navigation';
-import { BsFillPencilFill, BsCalendar2EventFill, BsXLg } from "react-icons/bs";
+import { BsFillPencilFill, BsXLg } from "react-icons/bs";
 
 function page() {
     const URL = 'http://localhost:3000';
@@ -22,11 +23,11 @@ function page() {
                     'Content-Type': 'application/json'
                 }
             });
-
-            if (!response.ok) throw new Error('Erro ao buscar serviços da empresa');
+            if (!response.ok) 
+                throw new Error('Erro ao buscar serviços da empresa');
             const data = await response.json();
+            console.log(data, id)
             setServicos(data);
-            console.log("serviços: ", data);
         } catch (e) {
             console.error(e);
         }
@@ -38,15 +39,22 @@ function page() {
 
     useEffect(() => {
         console.log("modalEditarServ:", modalEditarServ);
-      }, [modalEditarServ]);
-      
+        getServEmpresa();
+    }, [modalEditarServ]);
+
 
     return (
         <>
-            {!!modalEditarServ &&(
+            {!!modalEditarServ && (
                 <ModalEditarServico
                     servico={servicos[selectedServico]}
                     onClose={() => { setModalEditarServ(false) }}
+                />
+            )}
+
+            {!!modalNovoServ && (
+                <ModalNovoServ 
+                    onClose={() => setModalNovoServ(false)} 
                 />
             )}
 
@@ -55,7 +63,7 @@ function page() {
                     <div className="flex w-full justify-between">
                         <h2 className=" text-2xl font-bold text-center">Serviços</h2>
                         <button className=" hover:text-blue-200 transition-colors">
-                            <i><BsXLg /></i>
+                            <i onClick={() => window.history.back()}><BsXLg /></i>
                         </button>
                     </div>
 
@@ -77,7 +85,6 @@ function page() {
                                         <h3 className="text-lg font-semibold text-gray-800">{servico.nome}</h3>
                                     </div>
                                 </div>
-
                                 <div className="space-y-3">
                                     <div className="flex justify-between items-center">
                                         <div className="flex items-center text-gray-600">
@@ -86,7 +93,6 @@ function page() {
                                         </div>
                                         <span className="font-medium">{servico.descricao}</span>
                                     </div>
-
                                     <div className="flex justify-between items-center">
                                         <div className="flex items-center text-gray-600">
                                             <i className="fas fa-phone mr-2"></i>
@@ -94,7 +100,6 @@ function page() {
                                         </div>
                                         <span className="font-medium">{servico.tempo_medio} minutos</span>
                                     </div>
-
                                     <div className="flex justify-between items-center">
                                         <div className="flex items-center text-gray-600">
                                             <i className="fas fa-envelope mr-2"></i>
@@ -105,7 +110,6 @@ function page() {
                                 </div>
 
                                 <div className="flex justify-between pt-4 mt-4 border-t border-gray-200">
-
                                     <button className="border-[1px] p-[10px] rounded-[10px] text-sm font-medium bg-blue-600 text-white flex items-center justify-between cursor-pointer"
                                         onClick={() => {
                                             setSelectedServico(i);
@@ -118,7 +122,9 @@ function page() {
                             </div>
                         ))}
                     </div>
-                    <button className="w-full bg-red-500 text-white mt-6 p-2 rounded-md max-w-[300px] cursor-pointer">
+                    <button className="w-full bg-red-500 text-white mt-6 p-2 rounded-md max-w-[300px] cursor-pointer"
+                        onClick={() => window.history.back()}
+                    >
                         voltar
                     </button>
                 </div>

@@ -48,13 +48,13 @@ export default function RegisterForm({ onSwitch }) {
       />
       <button
         type="submit"
-        className="w-full h-11 bg-foreground text-background hover:bg-[#383838] dark:hover:bg-[#ccc] rounded-full transition-colors font-medium"
+        className="w-full h-11 bg-foreground text-background hover:bg-[#383838] dark:hover:bg-[#ccc] rounded-full transition-colors font-medium cursor-pointer"
       >
         Criar conta
       </button>
       <p className="text-sm text-center text-muted-foreground">
         Já tem uma conta?{" "}
-        <button type="button" onClick={onSwitch} className="underline">
+        <button type="button" onClick={onSwitch} className="underline cursor-pointer">
           Entrar
         </button>
       </p>

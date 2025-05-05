@@ -10,8 +10,8 @@ export default function AuthPage() {
 
   return (
     <>
-      <div className="min-h-screen grid place-items-center bg-background text-foreground p-6 sm:p-12 font-[family-name:var(--font-geist-sans)]">
-        <div className="w-full max-w-md bg-white dark:bg-[#111] rounded-2xl shadow-lg border border-black/[.08] dark:border-white/[.145] p-8 space-y-6">
+      <div className="min-h-screen grid place-items-center text-foreground p-6 sm:p-12 font-[family-name:var(--font-geist-sans)]">
+        <div className="w-full max-w-md bg-gray-100 rounded-2xl shadow-lg border border-black/[.08] dark:border-white/[.145] p-8 space-y-6">
           <FadeSwitch activeKey={mode}>
             {mode === "login" ? (
               <LoginForm onSwitch={() => setMode("register")} />

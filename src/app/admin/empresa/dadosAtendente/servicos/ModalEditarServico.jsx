@@ -30,8 +30,19 @@ function ModalEditarServico({ servico, onClose }) {
         setDados(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSalvar =async () => {
-        const response= await fetch(`${URL}/servicos/${servico.id}`,{
+    const handleExcluir = async () => {
+        const response = await fetch(`${URL}/servicos/${servico.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        onClose();
+        window.location.reload();
+    };
+
+    const handleSalvar = async () => {
+        const response = await fetch(`${URL}/servicos/${servico.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -40,7 +51,7 @@ function ModalEditarServico({ servico, onClose }) {
                 ...dados,
                 valor: Number(dados.valor),
                 tempo_medio: Number(dados.tempo_medio)
-              })
+            })
         })
         onClose();
         window.location.reload();
@@ -106,6 +117,12 @@ function ModalEditarServico({ servico, onClose }) {
                 </div>
 
                 <div className="bg-gray-50 px-6 py-4 flex justify-end border-t border-gray-200">
+                    <button
+                        onClick={handleExcluir}
+                        className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 flex items-center"
+                    >
+                        <BsXLg className="mr-2" /> Excluir
+                    </button>
                     <button
                         onClick={handleSalvar}
                         className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"

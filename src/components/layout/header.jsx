@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { BsCalendar3 } from "react-icons/bs";
-
+import Cookies from 'js-cookie';
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const router= useRouter();
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-10">
@@ -18,7 +20,7 @@ export default function Header() {
         </div>
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="text-gray-600 focus:outline-none"
+          className="text-gray-600 cursor-pointer focus:outline-none"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +55,16 @@ export default function Header() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                  <a
+                    href="#"
+                    className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      Object.keys(Cookies.get()).forEach(cookie => Cookies.remove(cookie));
+                      router.push('/auth');
+                      window.location.reload();
+                    }}
+                  >
                     Sair
                   </a>
                 </li>
