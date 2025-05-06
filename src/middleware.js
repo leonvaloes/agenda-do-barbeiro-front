@@ -19,7 +19,7 @@ export function middleware(request) {
     if(role === 'EMPRESA')
       return NextResponse.redirect(new URL('/admin/empresa', request.url))
     else if(role === 'ATENDENTE')
-      return NextResponse.redirect(new URL('/admin/atendente', request.url))
+      return NextResponse.redirect(new URL('/admin/funcionario', request.url))
     else if(role === 'CLIENTE')
       return NextResponse.redirect(new URL('/admin/cliente', request.url))   
   }

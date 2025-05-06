@@ -47,7 +47,7 @@ export default function NewService({ onClose }) {
             return;
         }
         try {
-            const response = await fetch(`${URL}/atendente`, {
+            const response = await fetch(`${URL}/servicos/CriarEassociar`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dados)
@@ -65,19 +65,6 @@ export default function NewService({ onClose }) {
         }
     };
 
-    const exibirDadosParaEnvio = () => {
-        const payload = {
-            nome: dados.nome,
-            descricao: dados.descricao,
-            valor: dados.valor,
-            tempo_medio: dados.tempo_medio,
-            funcionarios: dados.funcionarios, // lista de IDs dos funcionários selecionados
-        };
-
-        console.log("Dados a serem enviados:", payload);
-        toast.info("Verifique o console para os dados que serão enviados.", { position: "top-center" });
-    };
-
     const fetchFuncionarios = async () => {
         try {
             const res = await fetch(`${URL}/empresa/getFunc/${id}`);
@@ -90,7 +77,6 @@ export default function NewService({ onClose }) {
     };
 
     useEffect(() => {
-        console.log("teste")
         fetchFuncionarios();
     }, []);
 
@@ -207,7 +193,7 @@ export default function NewService({ onClose }) {
                         </button>
 
                         <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
-                            onClick={exibirDadosParaEnvio}>
+                            onClick={fetchNovoSevice}>
                             <BsFillSdCardFill className="mr-2" /> Criar
                         </button>
                     </div>
