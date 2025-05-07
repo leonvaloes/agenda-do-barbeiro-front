@@ -5,7 +5,7 @@ const statusStyles = {
     color: 'bg-green-100 text-green-700',
     icon: <FaCheckCircle className="w-4 h-4 mr-1" />
   },
-  pendente: {
+  confirmação: {
     color: 'bg-yellow-100 text-yellow-700',
     icon: <FaClock className="w-4 h-4 mr-1" />
   },
@@ -19,9 +19,13 @@ const statusStyles = {
   }
 };
 
-export function AppointmentCard({ nome, servico_name, horario_inicio, horario_fim, status }) {
-  const initials = nome.slice(0, 2).toUpperCase();
-  const statusData = statusStyles[status] || {};
+export function AppointmentCard({ nome_atendente, nome_servico, data_hora, tempo_medio, estado }) {
+  const initials = nome_atendente.slice(0, 2).toUpperCase();
+  const statusData = statusStyles[estado] || {};
+
+  const inicio = new Date(data_hora);
+  const fim = new Date(inicio.getTime() + tempo_medio * 60000);
+  const formatTime = (date) => date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   return (
     <div className="bg-white p-5 rounded-2xl shadow-md border border-gray-100 hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
@@ -32,19 +36,19 @@ export function AppointmentCard({ nome, servico_name, horario_inicio, horario_fi
             {initials}
           </div>
           <div>
-            <h3 className="text-xl font-semibold text-gray-800">{nome}</h3>
-            <p className="text-sm text-gray-500">{servico_name}</p>
+            <h3 className="text-xl font-semibold text-gray-800">{nome_atendente}</h3>
+            <p className="text-sm text-gray-500">{nome_servico}</p>
           </div>
         </div>
 
         {/* Time + Status */}
         <div className="text-right">
           <div className="text-sm text-gray-600 font-medium">
-            {horario_inicio} - {horario_fim}
+            {formatTime(inicio)} - {formatTime(fim)}
           </div>
           <div className={`mt-2 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${statusData.color} w-30`}>
             {statusData.icon}
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+            {estado.charAt(0).toUpperCase() + estado.slice(1)}
           </div>
         </div>
       </div>

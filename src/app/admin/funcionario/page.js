@@ -10,64 +10,83 @@ import { AppointmentList } from '@/components/appointmentCard/AppointmentList';
 
 function page() {
 
+
+
+    // const agendamentos = [
+    //     {
+    //         nome: 'Zezin',
+    //         servico_name: 'Corte de pescoço',
+    //         horario_inicio: '12:00',
+    //         horario_fim: '14:30',
+    //         status: 'confirmado',
+    //     },
+    //     {
+    //         nome: 'Padre Fabio de melo',
+    //         servico_name: 'Corta fimose',
+    //         horario_inicio: '12:00',
+    //         horario_fim: '14:30',
+    //         status: 'cancelado',
+    //     },
+    //     {
+    //         nome: 'Pôncio Pilatos',
+    //         servico_name: 'Crucificação',
+    //         horario_inicio: '03:00',
+    //         horario_fim: '06:66',
+    //         status: 'confirmado',
+    //     },
+    //     {
+    //         nome: 'Cleitinho do Açougue',
+    //         servico_name: 'Depilação no Cu',
+    //         horario_inicio: '13:00',
+    //         horario_fim: '13:01',
+    //         status: 'confirmado',
+    //     },
+    //     {
+    //         nome: 'Jesus',
+    //         servico_name: 'Vai Voltar',
+    //         horario_inicio: '13:00',
+    //         horario_fim: '13:01',
+    //         status: 'cancelado',
+    //     },
+    //     {
+    //         nome: 'Toninho do Cemitério',
+    //         servico_name: 'Enterro',
+    //         horario_inicio: '06:00',
+    //         horario_fim: 'N/A',
+    //         status: 'concluido',
+    //     },
+    //     {
+    //         nome: 'João Sem Braço',
+    //         servico_name: 'Manicure',
+    //         horario_inicio: '10:00',
+    //         horario_fim: '10:05',
+    //         status: 'concluido',
+    //     }
+    // ];
+
+
     const [dadosAtendente, setDadosAtendente] = useState(null);
     const [dadosUserAtendente, setDadosUserAtendente] = useState(null);
-
-    const agendamentos = [
-        {
-            nome: 'Zezin',
-            servico_name: 'Corte de pescoço',
-            horario_inicio: '12:00',
-            horario_fim: '14:30',
-            status: 'confirmado',
-        },
-        {
-            nome: 'Padre Fabio de melo',
-            servico_name: 'Corta fimose',
-            horario_inicio: '12:00',
-            horario_fim: '14:30',
-            status: 'cancelado',
-        },
-        {
-            nome: 'Pôncio Pilatos',
-            servico_name: 'Crucificação',
-            horario_inicio: '03:00',
-            horario_fim: '06:66',
-            status: 'confirmado',
-        },
-        {
-            nome: 'Cleitinho do Açougue',
-            servico_name: 'Depilação no Cu',
-            horario_inicio: '13:00',
-            horario_fim: '13:01',
-            status: 'confirmado',
-        },
-        {
-            nome: 'Jesus',
-            servico_name: 'Vai Voltar',
-            horario_inicio: '13:00',
-            horario_fim: '13:01',
-            status: 'cancelado',
-        },
-        {
-            nome: 'Toninho do Cemitério',
-            servico_name: 'Enterro',
-            horario_inicio: '06:00',
-            horario_fim: 'N/A',
-            status: 'concluido',
-        },
-        {
-            nome: 'João Sem Braço',
-            servico_name: 'Manicure',
-            horario_inicio: '10:00',
-            horario_fim: '10:05',
-            status: 'concluido',
-        }
-    ];
-
+    const [agendamentos, setAgendamentos]=useState([]);
 
     const router = useRouter();
     const URL = "http://localhost:3000";
+
+    const fetchGetAgendamentos = async (id) => {
+        try {
+            const response = await fetch(`${URL}/agendamento/getAgendamentosByAtendente/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            setAgendamentos(data);
+            console.log("DATA AQUI O: ",data);
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     const fetchGetInfoUserByAtendenteId = async (Userid) => {
         try {
@@ -82,7 +101,6 @@ function page() {
         } catch (e) {
             console.log(e);
         }
-
     }
 
     const fetchGetAtendenteByIdUser = async (Userid) => {
@@ -96,15 +114,18 @@ function page() {
             const data = await response.json();
             setDadosAtendente(data);
             fetchGetInfoUserByAtendenteId(Userid);
-
+            fetchGetAgendamentos(data);
         } catch (e) {
             console.log(e);
         }
     }
 
+
+
     useEffect(() => {
         const idUser = Cookies.get('id');
         fetchGetAtendenteByIdUser(idUser);
+        
     }, []);
 
     return (
@@ -146,7 +167,7 @@ function page() {
                     <h2 className="text-2xl font-bold text-gray-800 mb-1">
                         Agenda de Hoje
                     </h2>
-                    <div className='w-full bg-white rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300'>
+                    <div className='w-full'>
                         <AppointmentList agendamentos={agendamentos} />
                     </div>
                 </div>
