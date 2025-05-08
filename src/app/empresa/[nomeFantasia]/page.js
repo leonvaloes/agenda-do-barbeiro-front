@@ -1,7 +1,10 @@
 'use client';
 
-import React from 'react';
-import { useParams } from 'next/navigation';
+import React, {useEffect, useState} from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+
+import CalendarCarousel from "@/components/calendarCarousel/calendarCarousel";
+
 import {
     FaCut,
     FaCalendarAlt,
@@ -16,15 +19,36 @@ import {
 } from 'react-icons/fa';
 
 function Page() {
-    const { nomeFantasia } = useParams();
+    const URL = "http://localhost:3000";
 
+    const router = useRouter();
+    const {nomeFantasia} = useParams();
+    const [dadosEmpresa,setDadosEmpresa]=useState(null);    
+
+    const fetchDadosEmpresa=async()=>{
+        try{
+            const response=await fetch(`${URL}/empresa/getEmpresaByName/${nomeFantasia}`);
+            const data=await response.json();
+            setDadosEmpresa(data);
+        }catch(error){
+            console.error("Erro ao buscar dados da empresa:",error);
+        }
+    }
+
+    const handleAgendar = () => {
+        router.push(`/empresa/${nomeFantasia}/agendamento`);
+    };
+
+    useEffect(()=>{
+        fetchDadosEmpresa();
+    },[]);
+    
     return (
         <>
-
             {/* Banner */}
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-500 text-white">
-                <div className="max-w-7xl px-4 py-16 border">
-                    <div className="max-w-2xl">
+            <div className="flex bg-gradient-to-r from-blue-600 to-indigo-500 text-white">
+                <div className=" container mx-auto px-4 py-3 flex justify-between px-4 py-16">
+                    <div className="container mx-auto px-4 py-3">
                         <h2 className="text-4xl font-bold mb-4">Transforme seu visual conosco</h2>
                         <p className="text-xl mb-6">Profissionais qualificados e os melhores produtos para cuidar da sua beleza</p>
                         <div className="flex flex-wrap gap-4">
@@ -34,12 +58,12 @@ function Page() {
                             >
                                 <FaCut className="inline mr-2" /> Nossos Serviços
                             </a>
-                            <a
-                                href="#"
+                            <button
                                 className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition"
+                                onClick={handleAgendar}
                             >
                                 <FaCalendarAlt className="inline mr-2" /> Agendar Agora
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>

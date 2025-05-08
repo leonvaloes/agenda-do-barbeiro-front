@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 import { BsFillSdCardFill, BsXLg } from "react-icons/bs";
 import { toast } from "react-toastify";
 
-export default function NewAtendente({ onClose }) {
+export default function NewAtendente({ Empresa_id ,onClose }) {
 
     const [dados, setDados] = useState({
         nome: '',
         cpf: '',
         telefone: '',
         email: '',
-        empresa_id: 1,
+        empresa_id: Empresa_id,
         senha: ''
     });
 
@@ -24,7 +24,7 @@ export default function NewAtendente({ onClose }) {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setDados(prev => ({ ...prev, [name]: value }));
-        setErros(prev => ({ ...prev, [name]: false })); // limpa o erro ao digitar
+        setErros(prev => ({ ...prev, [name]: false }));
     };
 
     const fetchNovoFunc = async () => {

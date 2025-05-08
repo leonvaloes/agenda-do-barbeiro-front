@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { format, startOfMonth, endOfMonth, addDays, subMonths, addMonths, isSameDay } from 'date-fns';
 import { BsClockHistory, BsX, BsFillPersonFill, BsFillPencilFill, BsClockFill } from "react-icons/bs";
 import { ptBR } from 'date-fns/locale';
-import Button from '../button/button';
 import { toast } from "react-toastify";
+import Button from '@/components/button/button';
 
-export default function CalendarCarousel() {
-    const { empresaId } = useParams();
+export default function page() {
+    const {nomeFantasia} = useParams();
 
     const URL = "http://localhost:3000"
 
@@ -36,6 +37,7 @@ export default function CalendarCarousel() {
     const [servicos, setServicos] = useState([]);
     const [atendentes, setAtendentes] = useState([]);
     const [atendenteId, setAtendenteId] = useState();
+    const [dadosEmpresa, setDadosEmpresa] = useState(null);
 
     const handlePrevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
     const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
@@ -66,11 +68,10 @@ export default function CalendarCarousel() {
         data.forEach(obj => {
             console.log(obj);
         });
-        return data;
     }
 
-    async function getServices() {
-        const response = await fetch(`${URL}/empresa/listServ/${empresaId}`, {
+    async function getServices(Empresaid) {
+        const response = await fetch(`${URL}/empresa/listServ/${Empresaid}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -83,10 +84,6 @@ export default function CalendarCarousel() {
 
         const data = await response.json();
         setServicos(data);
-        data.forEach(obj => {
-            console.log(obj);
-        });
-        return data;
     }
 
     async function getHours(data) {
@@ -134,6 +131,17 @@ export default function CalendarCarousel() {
         setModalConcluido(true);
     }
 
+    const fetchDadosEmpresa=async()=>{
+        try{
+            const response=await fetch(`${URL}/empresa/getEmpresaByName/${nomeFantasia}`);
+            const data=await response.json();
+            setDadosEmpresa(data[0]);
+            getServices(data[0].id);
+        }catch(error){
+            console.error("Erro ao buscar dados da empresa:",error);
+        }
+    }
+
     const editar = () => {
         setCardResum(false);
         setModalService(true);
@@ -151,7 +159,7 @@ export default function CalendarCarousel() {
             throw new Error('Erro ao buscar id do atendente');
         }
         const result = await response.json();
-        setAtendenteId(result.id);
+        setAtendenteId(result);
     }
 
     const handleService = (index) => {
@@ -170,7 +178,7 @@ export default function CalendarCarousel() {
     const handleAtendente = (index) => {
         setSelectedAtendente(index)
         setModalAtendente(false);
-        getIdAtendente(atendentes[index].id);
+        getIdAtendente(atendentes[index][0].id);
         setModalAgenda(true);
     }
 
@@ -188,7 +196,7 @@ export default function CalendarCarousel() {
     }
 
     useEffect(() => {
-        getServices();
+        fetchDadosEmpresa();
     }, []);
 
     useEffect(() => {
@@ -230,8 +238,8 @@ export default function CalendarCarousel() {
             )}
 
             {!!modalCancelado && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center flex-col">
-                    <div className="bg-black p-4 rounded-lg shadow-lg w-full h-full flex items-center flex-col">
+                <div className="fixed inset-0 bg-white bg-opacity-50 z-50 flex items-center justify-center flex-col">
+                    <div className="bg-white p-4 rounded-lg shadow-lg w-full h-full flex items-center flex-col">
                         <h2 className=" text-2xl font-bold text-center p-[30px]">Agendamento NÃO concluido!</h2>
                         <hr className='w-full text-gray-600' />
                         <h2 className='text-center text-gray-600'>Selecione outro horário para o agendamento!</h2>
@@ -320,7 +328,7 @@ export default function CalendarCarousel() {
                                                 <BsFillPersonFill className="text-[26px]" />
                                             )}
                                         </span>
-                                        <span className="font-bold text-lg text-gray-800 mb-1">{atendente.nome}</span>
+                                        <span className="font-bold text-lg text-gray-800 mb-1">{atendente[0].nome}</span>
                                     </div>
                                 </div>
                             </div>

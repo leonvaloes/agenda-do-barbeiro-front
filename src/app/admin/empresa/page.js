@@ -48,7 +48,7 @@ function Page() {
             const data = await response.json();
             setFuncionarios(data);
         } catch (error) {
-            console.error(error);
+            console.log("nenhum funcionario");
         }
     };
 
@@ -65,7 +65,7 @@ function Page() {
             fetchGetFuncEmpresa(data[0].id);
             fetchGetServicos(data[0].id);
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     }
 
@@ -82,6 +82,7 @@ function Page() {
         <>
             {!!modalFuncionarios && (
                 <ModalFuncionarios
+                    empresa_id={dadosUserEmpresa.id}
                     funcionarios={funcionarios}
                     onClose={() => { setModalFuncionarios(false), setPrincipal(true) }}
                     onEdit={abrirModalEdit}
@@ -147,7 +148,6 @@ function Page() {
                         </section>
                         <section className="mb-8">
                             <h3 className="text-lg font-semibold text-gray-800 mb-4">Gerenciamento</h3>
-
                             <div className="space-y-4">
                                 <button className="w-full py-4 px-6 rounded-xl text-white font-medium cursor-pointer flex items-center justify-between transition-all duration-300 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-700 hover:to-blue-500"
                                     onClick={() => abrirModalFunc()}

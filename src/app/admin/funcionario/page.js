@@ -10,61 +10,6 @@ import { AppointmentList } from '@/components/appointmentCard/AppointmentList';
 
 function page() {
 
-
-
-    // const agendamentos = [
-    //     {
-    //         nome: 'Zezin',
-    //         servico_name: 'Corte de pescoço',
-    //         horario_inicio: '12:00',
-    //         horario_fim: '14:30',
-    //         status: 'confirmado',
-    //     },
-    //     {
-    //         nome: 'Padre Fabio de melo',
-    //         servico_name: 'Corta fimose',
-    //         horario_inicio: '12:00',
-    //         horario_fim: '14:30',
-    //         status: 'cancelado',
-    //     },
-    //     {
-    //         nome: 'Pôncio Pilatos',
-    //         servico_name: 'Crucificação',
-    //         horario_inicio: '03:00',
-    //         horario_fim: '06:66',
-    //         status: 'confirmado',
-    //     },
-    //     {
-    //         nome: 'Cleitinho do Açougue',
-    //         servico_name: 'Depilação no Cu',
-    //         horario_inicio: '13:00',
-    //         horario_fim: '13:01',
-    //         status: 'confirmado',
-    //     },
-    //     {
-    //         nome: 'Jesus',
-    //         servico_name: 'Vai Voltar',
-    //         horario_inicio: '13:00',
-    //         horario_fim: '13:01',
-    //         status: 'cancelado',
-    //     },
-    //     {
-    //         nome: 'Toninho do Cemitério',
-    //         servico_name: 'Enterro',
-    //         horario_inicio: '06:00',
-    //         horario_fim: 'N/A',
-    //         status: 'concluido',
-    //     },
-    //     {
-    //         nome: 'João Sem Braço',
-    //         servico_name: 'Manicure',
-    //         horario_inicio: '10:00',
-    //         horario_fim: '10:05',
-    //         status: 'concluido',
-    //     }
-    // ];
-
-
     const [dadosAtendente, setDadosAtendente] = useState(null);
     const [dadosUserAtendente, setDadosUserAtendente] = useState(null);
     const [agendamentos, setAgendamentos]=useState([]);

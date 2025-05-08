@@ -5,7 +5,7 @@ import { BsFillPencilFill, BsCalendar2EventFill, BsFilePerson, BsXLg } from "rea
 import ModalEditarAtendente from './EditAtendentes';
 import ModalNovoFunc from './NewAtendente';
 
-function ModalFuncionarios({ funcionarios, onClose, onEdit }) {
+function ModalFuncionarios({ empresa_id, funcionarios, onClose, onEdit }) {
     const [modalEditAtendente, setModalEditAtendente] = useState(false);
     const [modalNovoFunc, setModalNovoFunc] = useState(false);
     const [selectedAtendente, setSelectedAtendente] = useState(null);
@@ -13,7 +13,9 @@ function ModalFuncionarios({ funcionarios, onClose, onEdit }) {
     return (
         <>
             {modalNovoFunc && (
-                <ModalNovoFunc onClose={() => setModalNovoFunc(false)} />
+                <ModalNovoFunc 
+                Empresa_id={empresa_id}
+                onClose={() => setModalNovoFunc(false)} />
             )}
 
             {modalEditAtendente && selectedAtendente !== null && funcionarios[selectedAtendente] && (
