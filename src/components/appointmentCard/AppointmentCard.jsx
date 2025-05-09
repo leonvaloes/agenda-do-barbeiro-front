@@ -19,8 +19,8 @@ const statusStyles = {
   }
 };
 
-export function AppointmentCard({ nome_atendente, nome_servico, data_hora, tempo_medio, estado }) {
-  const initials = nome_atendente.slice(0, 2).toUpperCase();
+export function AppointmentCard({ nome_cliente ,nome_atendente, nome_servico, data_hora, tempo_medio, estado }) {
+  const initials = nome_cliente.slice(0, 2).toUpperCase();
   const statusData = statusStyles[estado] || {};
 
   const inicio = new Date(data_hora);
@@ -36,7 +36,7 @@ export function AppointmentCard({ nome_atendente, nome_servico, data_hora, tempo
             {initials}
           </div>
           <div>
-            <h3 className="text-xl font-semibold text-gray-800">{nome_atendente}</h3>
+            <h3 className="text-xl font-semibold text-gray-800">{nome_cliente}</h3>
             <p className="text-sm text-gray-500">{nome_servico}</p>
           </div>
         </div>

@@ -90,7 +90,7 @@ function page() {
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500">Agendamento Hoje</p>
-                                <h3 className="text-xl font-bold">123</h3>
+                                <h3 className="text-xl font-bold">{agendamentos? agendamentos.length : 0 }</h3>
                             </div>
                         </div>
                     </div>
