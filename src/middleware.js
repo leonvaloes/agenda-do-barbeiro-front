@@ -1,33 +1,56 @@
 import { NextResponse } from 'next/server'
 
-// Middleware executa em cada requisição
 export function middleware(request) {
-  // Lê o cookie chamado "token"
   const token = request.cookies.get('token')?.value
-  const role= request.cookies.get('role')?.value
-  const id= request.cookies.get('id')?.value
+  const role = request.cookies.get('role')?.value
+  const id = request.cookies.get('id')?.value
+  const pathname = request.nextUrl.pathname
 
-  // redireciona para /auth caso nao tenha nenhum token ativo
+  // Se não tiver token
   if (!token) {
-    if (!request.nextUrl.pathname.startsWith('/auth')) {
-      return NextResponse.redirect(new URL('/auth', request.url))
+  const pathname = request.nextUrl.pathname;
+
+  // Permitir acesso público à página da empresa
+  if (/^\/empresa\/[^/]+$/.test(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Se for a rota de agendamento
+  if (/^\/empresa\/[^/]+\/agendamento/.test(pathname)) {
+    const redirectUrl = new URL('/auth', request.url);
+    redirectUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(redirectUrl);
+  }
+
+  // Redirecionamento padrão
+  if (!pathname.startsWith('/auth')) {
+    return NextResponse.redirect(new URL('/auth', request.url));
+  }
+}
+
+
+  // Se o usuário está logado e tentando acessar /auth
+  if (pathname.startsWith('/auth') && token) {
+    const callbackUrl = request.nextUrl.searchParams.get('callbackUrl')
+
+    if (role === 'EMPRESA') {
+      return NextResponse.redirect(new URL('/admin/empresa', request.url))
+    }
+
+    if (role === 'ATENDENTE') {
+      return NextResponse.redirect(new URL('/admin/funcionario', request.url))
+    }
+
+    if (role === 'CLIENTE') {
+      if (callbackUrl && /^\/empresa\/[^/]+\/agendamento/.test(callbackUrl)) {
+        return NextResponse.redirect(new URL(callbackUrl, request.url))
+      }
+      return NextResponse.redirect(new URL('/admin/cliente', request.url))
     }
   }
-
-  // Se estiver na rota /auth e já tiver token, redireciona para /
-  if (request.nextUrl.pathname.startsWith('/auth') && token) {
-    if(role === 'EMPRESA')
-      return NextResponse.redirect(new URL('/admin/empresa', request.url))
-    else if(role === 'ATENDENTE')
-      return NextResponse.redirect(new URL('/admin/funcionario', request.url))
-    else if(role === 'CLIENTE')
-      return NextResponse.redirect(new URL('/admin/cliente', request.url))   
-  }
-
-  // Senão, deixa seguir normalmente
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/', '/admin/:path*', '/auth'],
+  matcher: ['/', '/admin/:path*', '/auth', '/empresa/:path*'],
 }

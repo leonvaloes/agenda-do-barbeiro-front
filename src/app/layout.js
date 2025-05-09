@@ -1,6 +1,7 @@
 // app/layout.js
 import "./globals.css";
-import Header from "../components/layout/header.jsx"; // atualize se o path for diferente
+import Header from "../components/layout/header.jsx";
+import Footer from "../components/layout/footer.jsx"; // atualize se o path for diferente
 import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 
@@ -13,6 +14,7 @@ export default function RootLayout({ children }) {
         <Header />
         <main className="w-full">{children}</main>
         <ToastContainer />
+        <Footer/>
       </body>
     </html>
   );
