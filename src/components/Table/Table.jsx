@@ -7,10 +7,10 @@ function Table({ data, columns, setSelectedLine }) {
 
   return (
     <div className="max-h-[100vh] overflow-x-auto rounded-lg border border-black/[.08] dark:border-white/[.1] shadow-sm">
-      <table className="w-full text-sm sm:text-base text-left border-collapse">
+      <table className="w-full text-sm sm:text-base text-left border-collapse table-auto">
         {isListValid ? (
           <>
-            <thead className="bg-gray-100 dark:bg-[#1a1a1a] text-gray-700 dark:text-gray-200 uppercase tracking-wide">
+            <thead className="bg-blue-300 text-white uppercase tracking-wide">
               <tr>
                 {columns.map((column) => (
                   <th
@@ -27,7 +27,7 @@ function Table({ data, columns, setSelectedLine }) {
                 <tr
                   key={rowIndex}
                   onClick={() => setSelectedLine?.(row)}
-                  className="hover:bg-gray-50 dark:hover:bg-[#2a2a2a] cursor-pointer transition-colors"
+                  className="hover:bg-gray-100 cursor-pointer transition-colors"
                 >
                   {columns.map((col) => (
                     <td

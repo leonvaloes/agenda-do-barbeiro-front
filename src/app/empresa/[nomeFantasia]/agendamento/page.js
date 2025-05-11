@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { format, startOfMonth, endOfMonth, addDays, subMonths, addMonths, isSameDay } from 'date-fns';
+import { format,parseISO, startOfMonth, endOfMonth, addDays, subMonths, addMonths, isSameDay } from 'date-fns';
 import { BsClockHistory, BsX, BsFillPersonFill, BsFillPencilFill, BsClockFill } from "react-icons/bs";
 import { ptBR } from 'date-fns/locale';
 import { toast } from "react-toastify";
 import Button from '@/components/button/button';
 
 export default function page() {
-    const {nomeFantasia} = useParams();
+    const { nomeFantasia } = useParams();
 
     const URL = "http://localhost:3000"
 
@@ -88,7 +88,9 @@ export default function page() {
 
     async function getHours(data) {
         setSelectedDate(data);
+        console.log("ANTES", data)
         data = data.toISOString().split('T')[0];
+        console.log("DEPOIS", data)
 
         const response = await fetch(`${URL}/atendente/getHours/${atendenteId}`, {
             method: 'POST',
@@ -131,14 +133,14 @@ export default function page() {
         setModalConcluido(true);
     }
 
-    const fetchDadosEmpresa=async()=>{
-        try{
-            const response=await fetch(`${URL}/empresa/getEmpresaByName/${nomeFantasia}`);
-            const data=await response.json();
+    const fetchDadosEmpresa = async () => {
+        try {
+            const response = await fetch(`${URL}/empresa/getEmpresaByName/${nomeFantasia}`);
+            const data = await response.json();
             setDadosEmpresa(data[0]);
             getServices(data[0].id);
-        }catch(error){
-            console.error("Erro ao buscar dados da empresa:",error);
+        } catch (error) {
+            console.error("Erro ao buscar dados da empresa:", error);
         }
     }
 
@@ -397,12 +399,12 @@ export default function page() {
                             Horários disponíveis para {format(selectedDate, "dd/MM/yyyy")}
                         </h2>
                         <div className="max-w-[700px] flex flex-wrap gap-4 justify-center items-start min-h-[80px]">
-                            {Hours.filter(
-                                (item) =>
-                                    format(new Date(item.data_hora), "yyyy-MM-dd") ===
-                                    format(selectedDate, "yyyy-MM-dd")
-                            ).map((item, i) => {
-                                const timeObj = new Date(item.data_hora);
+                            {Hours.filter((item) => {
+                                const dateOnly = format(parseISO(item.data_hora), "yyyy-MM-dd");
+                                const selectedOnly = format(selectedDate, "yyyy-MM-dd");
+                                return dateOnly === selectedOnly;
+                            }).map((item, i) => {
+                                const timeObj = parseISO(item.data_hora);
                                 const formattedTime = timeObj.toLocaleTimeString("pt-BR", {
                                     hour: "2-digit",
                                     minute: "2-digit",
@@ -413,8 +415,8 @@ export default function page() {
                                         key={i}
                                         onClick={() => handleTimeClick(item.data_hora)}
                                         className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 border 
-                                        min-w-[90px] min-h-[50px] text-center
-                                        ${isSelected
+                        min-w-[90px] min-h-[50px] text-center
+                        ${isSelected
                                                 ? "bg-blue-600 text-white border-blue-500 shadow-md"
                                                 : "bg-white text-gray-800 border-gray-300 hover:border-blue-400 hover:bg-blue-50"
                                             }`}
