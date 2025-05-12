@@ -1,23 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "react-toastify";  // Importando o toast
+import { toast } from "react-toastify";
 
 export default function RegisterForm({ onSwitch }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const URL = "http://localhost:3000"
 
-  const handleRegister = (e) => {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [senha, setSenha] = useState("");
+
+  const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (!name || !email || !password) {
+    if (!nome || !email || !cpf || !senha) {
       toast.error("Todos os campos são obrigatórios!", { position: "top-center" });
       return;
     }
+    try {
+      const response = await fetch(`${URL}/cliente`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ nome, email, cpf, senha }),
+      });
+      
+      if (!response.ok) {
+        console.log("Erro pelo lado do servidor!");
+      }
+      toast.success("Cadastro bem-sucedido!", { position: "top-center" });
+      setTimeout(() => {
+        window.location.reload();
+      }, 5000);
 
-    console.log("Registro:", { name, email, password });
-    toast.success("Cadastro bem-sucedido!", { position: "top-center" });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -28,8 +48,8 @@ export default function RegisterForm({ onSwitch }) {
       <input
         type="text"
         placeholder="Nome completo"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
         className="w-full h-11 px-4 rounded-full border border-gray-300 dark:border-gray-700 bg-transparent focus:outline-none focus:ring-2 focus:ring-foreground"
       />
       <input
@@ -40,10 +60,17 @@ export default function RegisterForm({ onSwitch }) {
         className="w-full h-11 px-4 rounded-full border border-gray-300 dark:border-gray-700 bg-transparent focus:outline-none focus:ring-2 focus:ring-foreground"
       />
       <input
-        type="password"
+        type="cpf"
+        placeholder="CPF"
+        value={cpf}
+        onChange={(e) => setCpf(e.target.value)}
+        className="w-full h-11 px-4 rounded-full border border-gray-300 dark:border-gray-700 bg-transparent focus:outline-none focus:ring-2 focus:ring-foreground"
+      />
+      <input
+        type="senha"
         placeholder="Senha"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        value={senha}
+        onChange={(e) => setSenha(e.target.value)}
         className="w-full h-11 px-4 rounded-full border border-gray-300 dark:border-gray-700 bg-transparent focus:outline-none focus:ring-2 focus:ring-foreground"
       />
       <button

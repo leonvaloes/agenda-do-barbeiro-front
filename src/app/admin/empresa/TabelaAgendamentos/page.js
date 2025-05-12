@@ -11,6 +11,7 @@ function page() {
     const columns = [
         { field: "nome_cliente", headerName: "Cliente" },
         { field: "nome_servico", headerName: "Serviço" },
+        { field: "nome_atendente", headerName: "Atendente" },
         {
             field: "estado",
             headerName: "Status",
@@ -47,38 +48,40 @@ function page() {
                 return formatado;
             }
         }
-        ,
     ];
 
     const [agendamentos, setAgendamentos] = useState([]);
-    const [dadosAtendente, setDadosAtendente] = useState(null);
+    const [dadosEmpresa, setDadosEmpresa] = useState(null);
     const [selected, setSelected] = useState(null);
 
     const fetchGetAgendamentos = async (id) => {
         try {
-            const response = await fetch(`${URL}/agendamento/getAgendamentosByAtendente/${id}`, {
+            const response = await fetch(`${URL}/agendamento/getAgendamentosByEmpresa/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             const data = await response.json();
+            console.log("teoricamente agendametos",data)
             setAgendamentos(data);
         } catch (e) {
             console.log(e);
         }
     }
-    const fetchGetAtendenteByIdUser = async (Userid) => {
+
+    const fetchGetEmpresaByIdUser = async (Userid) => {
         try {
-            const response = await fetch(`${URL}/atendente/getIdAtendente/${Userid}`, {
+            const response = await fetch(`${URL}/empresa/getUser/${Userid}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             const data = await response.json();
-            setDadosAtendente(data);
-            fetchGetAgendamentos(data);
+            setDadosEmpresa(data[0]);
+            console.log("dados empresa", data[0])
+            fetchGetAgendamentos(data[0].id);
         } catch (e) {
             console.log(e);
         }
@@ -86,7 +89,7 @@ function page() {
 
     useEffect(() => {
         const idUser = Cookies.get('id');
-        fetchGetAtendenteByIdUser(idUser);
+        fetchGetEmpresaByIdUser(idUser);
     }, []);
 
     return (
@@ -98,14 +101,10 @@ function page() {
                             Agendamentos
                         </h1>
                         <span className="text-gray-600 text-sm sm:text-base">
-                            Visualize e gerencie todos os agendamentos
+                            Visualize e gerencie todos os agendamentos da {dadosEmpresa?.nome}
                         </span>
                     </div>
-                    <button className="flex items-center bg-blue-600 text-white rounded-[8px] px-5 py-2 text-sm sm:text-base hover:bg-blue-700 transition-colors">
-                        <BsPlusLg className="mr-2" /> Novo
-                    </button>
                 </div>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
                         <div className="flex items-center">
@@ -118,7 +117,6 @@ function page() {
                             </div>
                         </div>
                     </div>
-
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
                         <div className="flex items-center">
                             <div className="p-4 bg-green-100 rounded-full text-green-500 mr-3">
@@ -126,11 +124,12 @@ function page() {
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500">Concluídos</p>
-                                <h3 className="text-xl font-bold">{agendamentos.filter(agendamento=>agendamento.estado==="concluído").length}</h3>
+                                <h3 className="text-xl font-bold">
+                                    {agendamentos.filter(agendamento=>agendamento.estado==="concluído").length}
+                                </h3>
                             </div>
                         </div>
                     </div>
-
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
                         <div className="flex items-center">
                             <div className="p-4 bg-yellow-100 rounded-full text-yellow-600 mr-3">
@@ -142,7 +141,6 @@ function page() {
                             </div>
                         </div>
                     </div>
-
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
                         <div className="flex items-center">
                             <div className="p-4 bg-red-100 rounded-full text-red-500 mr-3">
@@ -155,7 +153,6 @@ function page() {
                         </div>
                     </div>
                 </div>
-
                 <div className="mt-10">
                     <Table className="" data={agendamentos} columns={columns} setSelectedLine={setSelected} />
                 </div>

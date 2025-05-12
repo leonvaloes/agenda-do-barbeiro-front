@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { BsCalendar2CheckFill, BsFillPeopleFill, BsCardChecklist, BsFillStarFill, BsCaretRightFill, BsCheck, BsCheckCircle } from "react-icons/bs";
+import { BsCalendar2CheckFill, BsCheckCircle } from "react-icons/bs";
 import Cookies from 'js-cookie';
 import { AppointmentList } from '@/components/appointmentCard/AppointmentList';
 

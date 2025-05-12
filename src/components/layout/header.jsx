@@ -9,6 +9,7 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
   const role = Cookies.get('role');
+  const token = Cookies.get('token');
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-10">
@@ -19,25 +20,25 @@ export default function Header() {
           </div>
           <h1 className="ml-3 text-xl font-bold text-gray-800">AgendaFácil</h1>
         </div>
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="text-gray-600 cursor-pointer focus:outline-none"
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="text-gray-600 cursor-pointer focus:outline-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            className="w-6 h-6"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
       </div>
 
       {menuOpen && (
@@ -54,12 +55,30 @@ export default function Header() {
                     </li>
 
                     <li>
-                      <a href="#" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                      <span onClick={()=>router.push('./relatorio')} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
                         Relatórios
+                      </span>
+                    </li>
+                  </>
+                )}
+
+                {role === "CLIENTE" && (
+                  <>
+                    <li>
+                      <a href="#" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                        Agendamentos recentes
                       </a>
                     </li>
                   </>
                 )}
+                {!token &&(
+                  <li>
+                    <a href="../auth" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                      Entrar
+                    </a>
+                  </li>
+                )}
+                
                 <li>
                   <a
                     href="#"

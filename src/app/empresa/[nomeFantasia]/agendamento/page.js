@@ -7,10 +7,10 @@ import { BsClockHistory, BsX, BsFillPersonFill, BsFillPencilFill, BsClockFill } 
 import { ptBR } from 'date-fns/locale';
 import { toast } from "react-toastify";
 import Button from '@/components/button/button';
+import Cookies from 'js-cookie';
 
 export default function page() {
     const { nomeFantasia } = useParams();
-
     const URL = "http://localhost:3000"
 
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -38,6 +38,7 @@ export default function page() {
     const [atendentes, setAtendentes] = useState([]);
     const [atendenteId, setAtendenteId] = useState();
     const [dadosEmpresa, setDadosEmpresa] = useState(null);
+    const [cliente, setCliente] = useState(null);
 
     const handlePrevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
     const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
@@ -49,6 +50,22 @@ export default function page() {
     const days = [];
     for (let day = start; day <= end; day = addDays(day, 1)) {
         days.push(day);
+    }
+
+    async function getCliente(UserId){
+        const response= await fetch(`${URL}/cliente/${UserId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if (!response.ok) {
+            throw new Error('Erro ao buscar cliente');
+        }
+
+        const data=await response.json();
+        console.log("CLIENTE: ",data[0]);
+        setCliente(data[0]);
     }
 
     async function getAtendente(servicoId) {
@@ -65,9 +82,6 @@ export default function page() {
 
         const data = await response.json();
         setAtendentes(data);
-        data.forEach(obj => {
-            console.log(obj);
-        });
     }
 
     async function getServices(Empresaid) {
@@ -88,9 +102,7 @@ export default function page() {
 
     async function getHours(data) {
         setSelectedDate(data);
-        console.log("ANTES", data)
         data = data.toISOString().split('T')[0];
-        console.log("DEPOIS", data)
 
         const response = await fetch(`${URL}/atendente/getHours/${atendenteId}`, {
             method: 'POST',
@@ -111,7 +123,7 @@ export default function page() {
 
     const agendar = async () => {
         const data = {
-            cliente_id: 1,
+            cliente_id: cliente.cliente_id,
             atendente_id: atendenteId,
             serv_id: servicos[selectedService].id,
             data_hora: data_hora
@@ -198,7 +210,9 @@ export default function page() {
     }
 
     useEffect(() => {
+        const idUser = Cookies.get('id');
         fetchDadosEmpresa();
+        getCliente(idUser);
     }, []);
 
     useEffect(() => {

@@ -169,7 +169,7 @@ function Page() {
                         <section>
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="text-lg font-semibold text-gray-800">Agendamentos Recentes</h3>
-                                <a href="#" className="text-blue-500 text-sm">Ver todos</a>
+                                <span onClick={()=>router.push('./empresa/TabelaAgendamentos')} className="text-blue-500 text-sm cursor-pointer">Ver todos</span>
                             </div>
                             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                                 <div className="divide-y divide-gray-100">

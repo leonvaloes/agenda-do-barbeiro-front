@@ -9,14 +9,6 @@ import CalendarCarousel from "@/components/calendarCarousel/calendarCarousel";
 import {
     FaCut,
     FaCalendarAlt,
-    FaPhoneAlt,
-    FaMapMarkerAlt,
-    FaAward,
-    FaStar,
-    FaSpa,
-    FaMale,
-    FaFire,
-    FaHandSparkles,
 } from 'react-icons/fa';
 
 function Page() {
