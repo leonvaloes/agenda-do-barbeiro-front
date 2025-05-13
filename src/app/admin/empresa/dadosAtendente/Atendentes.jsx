@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BsFillPencilFill, BsCalendar2EventFill, BsFilePerson, BsXLg } from "react-icons/bs";
 import ModalEditarAtendente from './EditAtendentes';
 import ModalNovoFunc from './NewAtendente';
@@ -10,18 +10,22 @@ function ModalFuncionarios({ empresa_id, funcionarios, onClose, onEdit }) {
     const [modalNovoFunc, setModalNovoFunc] = useState(false);
     const [selectedAtendente, setSelectedAtendente] = useState(null);
 
+    useEffect(() => {
+        console.log("funcionarios: ", funcionarios);
+    }, [funcionarios])
+
     return (
         <>
             {modalNovoFunc && (
-                <ModalNovoFunc 
-                Empresa_id={empresa_id}
-                onClose={() => setModalNovoFunc(false)} />
+                <ModalNovoFunc
+                    Empresa_id={empresa_id}
+                    onClose={() => setModalNovoFunc(false)} />
             )}
 
             {modalEditAtendente && selectedAtendente !== null && funcionarios[selectedAtendente] && (
                 <ModalEditarAtendente
                     funcionario={funcionarios[selectedAtendente]}
-                    onChange={() => {funcionarios[selectedAtendente]}}
+                    onChange={() => { funcionarios[selectedAtendente] }}
                     onClose={() => setModalEditAtendente(false)}
                 />
             )}
@@ -70,7 +74,14 @@ function ModalFuncionarios({ empresa_id, funcionarios, onClose, onEdit }) {
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Telefone:</span>
-                                        <span className="font-medium">{funcionario.telefone}</span>
+                                        <span className="font-medium">
+                                            {funcionario.telefone ? (
+                                                funcionario.telefone
+                                            ) : (
+                                                <span className="text-gray-400 italic">Telefone não cadastrado</span>
+                                            )}
+                                        </span>
+
                                     </div>
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Email:</span>
@@ -99,7 +110,7 @@ function ModalFuncionarios({ empresa_id, funcionarios, onClose, onEdit }) {
                                 </div>
 
                                 <div className="flex items-center mt-4 pt-3 border-t border-gray-200">
-                                    <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>  
+                                    <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
                                     <span className="text-sm text-gray-600">Disponível para atendimento</span>
                                 </div>
                             </div>
