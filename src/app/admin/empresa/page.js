@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import ModalFuncionarios from './dadosAtendente/Atendentes';
+import ModalAgendamentos from './EditAgendamentos/ModalAgendamentos ';
+
 import { useRouter } from 'next/navigation';
+
 
 import { BsCalendar2CheckFill, BsFillPeopleFill, BsCardChecklist, BsFillStarFill, BsCaretRightFill, BsPencil, BsTrash2 } from "react-icons/bs";
 import Cookies from 'js-cookie';
@@ -14,14 +17,14 @@ function Page() {
         { field: "nome_cliente", headerName: "Cliente" },
         { field: "nome_servico", headerName: "Serviço" },
         {
-          headerName: "Ações",
-          field: "actions",
-          renderCell: ({ row }) => (
-            <button className="text-blue-600 hover:underline">Remarcar</button>
-          ),
+            headerName: "Ações",
+            field: "actions",
+            renderCell: ({ row }) => (
+                <button className="text-blue-600 hover:underline">Remarcar</button>
+            ),
         },
-      ];
-    
+    ];
+
     const data =
         [
             {
@@ -84,28 +87,13 @@ function Page() {
     const [funcionarios, setFuncionarios] = useState([]);
     const [principal, setPrincipal] = useState(true);
     const [ajustarAgendamentos, setAjustarAgendamentos] = useState(false);
-    const [agendamentos, setAgendamentos]= useState(null);
+    const [agendamentos, setAgendamentos] = useState(null);
 
     const abrirModalFunc = () => {
         setModalFuncionarios(true);
         setPrincipal(false);
     };
 
-    const fetchGetAgendamentos = async (id) => {
-        try {
-            const response = await fetch(`${URL}/agendamento/getAgendamentosByEmpresa/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            const data = await response.json();
-            console.log("teoricamente agendametos",data)
-            setAgendamentos(data);
-        } catch (e) {
-            console.log(e);
-        }
-    }
 
     const fetchGetAgendamentos = async (id) => {
         try {
@@ -116,7 +104,7 @@ function Page() {
                 }
             });
             const data = await response.json();
-            console.log("teoricamente agendametos",data)
+            console.log("teoricamente agendametos", data)
             setAgendamentos(data);
         } catch (e) {
             console.log(e);
@@ -192,10 +180,9 @@ function Page() {
             )}
 
             {!!ajustarAgendamentos && (
-                <div >
-                    <Table columns={columns} data={data} />
-                </div>
+                <ModalAgendamentos data={data} onClose={() => setAjustarAgendamentos(false)} />
             )}
+
 
 
             {!!principal && (
@@ -291,7 +278,7 @@ function Page() {
                             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                                 <div className="divide-y divide-gray-100">
 
-                                </div>  
+                                </div>
                             </div>
                         </section>
                     </main>
