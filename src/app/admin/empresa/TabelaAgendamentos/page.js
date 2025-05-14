@@ -157,9 +157,7 @@ function page() {
                     <Table className="" data={agendamentos} columns={columns} setSelectedLine={setSelected} />
                 </div>
             </div>
-        </>
-
-
+        </
     )
 }
 

@@ -4,26 +4,94 @@ import { useEffect, useState } from 'react';
 import ModalFuncionarios from './dadosAtendente/Atendentes';
 import { useRouter } from 'next/navigation';
 
-import { BsCalendar2CheckFill, BsFillPeopleFill, BsCardChecklist, BsFillStarFill, BsCaretRightFill } from "react-icons/bs";
+import { BsCalendar2CheckFill, BsFillPeopleFill, BsCardChecklist, BsFillStarFill, BsCaretRightFill, BsPencil, BsTrash2 } from "react-icons/bs";
 import Cookies from 'js-cookie';
+import Table from '@/components/Table/Table';
+import ActionButtons from '@/components/ui/ActionButton';
 
-function Page() {    
+function Page() {
+    const columns = [
+        { field: "nome_cliente", headerName: "Cliente" },
+        { field: "nome_servico", headerName: "Serviço" },
+        {
+          headerName: "Ações",
+          field: "actions",
+          renderCell: ({ row }) => (
+            <button className="text-blue-600 hover:underline">Remarcar</button>
+          ),
+        },
+      ];
+    
+    const data =
+        [
+            {
+                "id": 1,
+                "nome_cliente": "João Silva",
+                "nome_servico": "Corte de Cabelo"
+            },
+            {
+                "id": 2,
+                "nome_cliente": "Maria Santos",
+                "nome_servico": "Manicure"
+            },
+            {
+                "id": 3,
+                "nome_cliente": "Carlos Oliveira",
+                "nome_servico": "Pedicure"
+            },
+            {
+                "id": 4,
+                "nome_cliente": "Ana Pereira",
+                "nome_servico": "Depilação"
+            },
+            {
+                "id": 5,
+                "nome_cliente": "Pedro Souza",
+                "nome_servico": "Hidratação"
+            },
+            {
+                "id": 6,
+                "nome_cliente": "Juliana Lima",
+                "nome_servico": "Massagem"
+            },
+            {
+                "id": 7,
+                "nome_cliente": "Fernando Costa",
+                "nome_servico": "Corte de Cabelo"
+            },
+            {
+                "id": 8,
+                "nome_cliente": "Amanda Santos",
+                "nome_servico": "Manicure"
+            },
+            {
+                "id": 9,
+                "nome_cliente": "Ricardo Oliveira",
+                "nome_servico": "Pedicure"
+            },
+            {
+                "id": 10,
+                "nome_cliente": "Mariana Pereira",
+                "nome_servico": "Depilação"
+            }
+        ]
 
-    const router = useRouter();    
+    const router = useRouter();
     const URL = "http://localhost:3000";
     const [modalFuncionarios, setModalFuncionarios] = useState(false);
     const [dadosUserEmpresa, setDadosUserEmpresa] = useState(null);
-    const [servicos, setServicos]=useState([])
+    const [servicos, setServicos] = useState([])
     const [funcionarios, setFuncionarios] = useState([]);
     const [principal, setPrincipal] = useState(true);
+    const [ajustarAgendamentos, setAjustarAgendamentos] = useState(false);
 
     const abrirModalFunc = () => {
         setModalFuncionarios(true);
         setPrincipal(false);
     };
 
-    const fetchGetServicos= async (idEmpresa) => {
-        try{
+    const fetchGetServicos = async (idEmpresa) => {
+        try {
             const response = await fetch(`${URL}/empresa/listServ/${idEmpresa}`, {
                 method: 'GET',
                 headers: {
@@ -32,7 +100,7 @@ function Page() {
             });
             const data = await response.json();
             setServicos(data);
-        }catch(e){
+        } catch (e) {
             console.log(e);
         }
     }
@@ -88,6 +156,13 @@ function Page() {
                     onEdit={abrirModalEdit}
                 />
             )}
+
+            {!!ajustarAgendamentos && (
+                <div >
+                    <Table columns={columns} data={data} />
+                </div>
+            )}
+
 
             {!!principal && (
                 <>
@@ -164,22 +239,32 @@ function Page() {
                                     <span>Gerenciar Serviços</span>
                                     <span><BsCaretRightFill /></span>
                                 </button>
+                                <button className="w-full py-4 px-6 rounded-xl cursor-pointer text-white font-medium flex items-center justify-between transition-all duration-300 bg-gradient-to-r from-green-500 to-green-700 hover:from-green-700 hover:to-green-500"
+                                    onClick={() => {
+                                        setAjustarAgendamentos(true)
+                                    }}
+                                >
+                                    <span>Ajustar Agendamentos</span>
+                                    <span><BsCaretRightFill /></span>
+                                </button>
                             </div>
                         </section>
                         <section>
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="text-lg font-semibold text-gray-800">Agendamentos Recentes</h3>
-                                <span onClick={()=>router.push('./empresa/TabelaAgendamentos')} className="text-blue-500 text-sm cursor-pointer">Ver todos</span>
+                                <span onClick={() => router.push('./empresa/TabelaAgendamentos')} className="text-blue-500 text-sm cursor-pointer">Ver todos</span>
                             </div>
                             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                                 <div className="divide-y divide-gray-100">
 
-                                </div>
+                                </div>  
                             </div>
                         </section>
                     </main>
                 </>
             )}
+
+
         </>
     );
 }

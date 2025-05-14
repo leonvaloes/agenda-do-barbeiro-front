@@ -1,4 +1,4 @@
-const Button = ({onClick, childreen}) => {
+const ConfirmButton = ({onClick, childreen}) => {
     return (
         <button 
         onClick={onClick}
@@ -8,4 +8,4 @@ const Button = ({onClick, childreen}) => {
     );
 };
 
-export default Button;
+export default ConfirmButton;

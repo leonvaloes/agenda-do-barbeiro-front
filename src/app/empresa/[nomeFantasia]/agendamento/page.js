@@ -6,7 +6,7 @@ import { format,parseISO, startOfMonth, endOfMonth, addDays, subMonths, addMonth
 import { BsClockHistory, BsX, BsFillPersonFill, BsFillPencilFill, BsClockFill } from "react-icons/bs";
 import { ptBR } from 'date-fns/locale';
 import { toast } from "react-toastify";
-import Button from '@/components/button/button';
+import ConfirmButton from '@/components/button/ConfirmButton';
 import Cookies from 'js-cookie';
 
 export default function page() {
@@ -259,7 +259,7 @@ export default function page() {
                         <h2 className=" text-2xl font-bold text-center p-[30px]">Agendamento NÃO concluido!</h2>
                         <hr className='w-full text-gray-600' />
                         <h2 className='text-center text-gray-600'>Selecione outro horário para o agendamento!</h2>
-                        <Button onClick={() => setModalCancelado(false)}>Fechar</Button>
+                        <ConfirmButton onClick={() => setModalCancelado(false)}>Fechar</ConfirmButton>
                     </div>
                 </div>
             )}
@@ -443,12 +443,12 @@ export default function page() {
                     </div>
                     {selectedDate && selectedTime && (
                         <div className="flex justify-center mt-6">
-                            <Button
+                            <ConfirmButton
                                 onClick={handleSelectTime}
                                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition"
                             >
                                 Continuar
-                            </Button>
+                            </ConfirmButton>
                         </div>
                     )}
                 </div>
