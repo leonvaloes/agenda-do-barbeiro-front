@@ -84,11 +84,44 @@ function Page() {
     const [funcionarios, setFuncionarios] = useState([]);
     const [principal, setPrincipal] = useState(true);
     const [ajustarAgendamentos, setAjustarAgendamentos] = useState(false);
+    const [agendamentos, setAgendamentos]= useState(null);
 
     const abrirModalFunc = () => {
         setModalFuncionarios(true);
         setPrincipal(false);
     };
+
+    const fetchGetAgendamentos = async (id) => {
+        try {
+            const response = await fetch(`${URL}/agendamento/getAgendamentosByEmpresa/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            console.log("teoricamente agendametos",data)
+            setAgendamentos(data);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    const fetchGetAgendamentos = async (id) => {
+        try {
+            const response = await fetch(`${URL}/agendamento/getAgendamentosByEmpresa/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            console.log("teoricamente agendametos",data)
+            setAgendamentos(data);
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
     const fetchGetServicos = async (idEmpresa) => {
         try {
@@ -132,6 +165,7 @@ function Page() {
             setDadosUserEmpresa(data[0]);
             fetchGetFuncEmpresa(data[0].id);
             fetchGetServicos(data[0].id);
+            fetchGetAgendamentos(data[0].id);
         } catch (e) {
             console.error(e);
         }
@@ -205,7 +239,7 @@ function Page() {
                                     </div>
                                     <div>
                                         <p className="text-sm text-gray-500">Agendamentos</p>
-                                        <h3 className="text-xl font-bold">156</h3>
+                                        <h3 className="text-xl font-bold">{agendamentos?.length}</h3>
                                     </div>
                                 </div>
                             </div>

@@ -65,9 +65,9 @@ export default function Header() {
                 {role === "CLIENTE" && (
                   <>
                     <li>
-                      <a href="#" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                      <span onClick={()=>router.push('/cliente')} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
                         Agendamentos recentes
-                      </a>
+                      </span>
                     </li>
                   </>
                 )}
@@ -87,7 +87,6 @@ export default function Header() {
                       e.preventDefault();
                       Object.keys(Cookies.get()).forEach(cookie => Cookies.remove(cookie));
                       router.push('/auth');
-                      window.location.reload();
                     }}
                   >
                     Sair
