@@ -45,7 +45,7 @@ export function middleware(request) {
       if (callbackUrl && /^\/empresa\/[^/]+\/agendamento/.test(callbackUrl)) {
         return NextResponse.redirect(new URL(callbackUrl, request.url))
       }
-      return NextResponse.redirect(new URL('/admin/cliente', request.url))
+      return NextResponse.redirect(new URL('./cliente', request.url))
     }
   }
   return NextResponse.next()
