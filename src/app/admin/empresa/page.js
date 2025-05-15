@@ -13,71 +13,6 @@ import Table from '@/components/Table/Table';
 import ActionButtons from '@/components/ui/ActionButton';
 
 function Page() {
-    const columns = [
-        { field: "nome_cliente", headerName: "Cliente" },
-        { field: "nome_servico", headerName: "Serviço" },
-        {
-            headerName: "Ações",
-            field: "actions",
-            renderCell: ({ row }) => (
-                <button className="text-blue-600 hover:underline">Remarcar</button>
-            ),
-        },
-    ];
-
-    const data =
-        [
-            {
-                "id": 1,
-                "nome_cliente": "João Silva",
-                "nome_servico": "Corte de Cabelo"
-            },
-            {
-                "id": 2,
-                "nome_cliente": "Maria Santos",
-                "nome_servico": "Manicure"
-            },
-            {
-                "id": 3,
-                "nome_cliente": "Carlos Oliveira",
-                "nome_servico": "Pedicure"
-            },
-            {
-                "id": 4,
-                "nome_cliente": "Ana Pereira",
-                "nome_servico": "Depilação"
-            },
-            {
-                "id": 5,
-                "nome_cliente": "Pedro Souza",
-                "nome_servico": "Hidratação"
-            },
-            {
-                "id": 6,
-                "nome_cliente": "Juliana Lima",
-                "nome_servico": "Massagem"
-            },
-            {
-                "id": 7,
-                "nome_cliente": "Fernando Costa",
-                "nome_servico": "Corte de Cabelo"
-            },
-            {
-                "id": 8,
-                "nome_cliente": "Amanda Santos",
-                "nome_servico": "Manicure"
-            },
-            {
-                "id": 9,
-                "nome_cliente": "Ricardo Oliveira",
-                "nome_servico": "Pedicure"
-            },
-            {
-                "id": 10,
-                "nome_cliente": "Mariana Pereira",
-                "nome_servico": "Depilação"
-            }
-        ]
 
     const router = useRouter();
     const URL = "http://localhost:3000";
@@ -94,7 +29,6 @@ function Page() {
         setPrincipal(false);
     };
 
-
     const fetchGetAgendamentos = async (id) => {
         try {
             const response = await fetch(`${URL}/agendamento/getAgendamentosByEmpresa/${id}`, {
@@ -104,7 +38,6 @@ function Page() {
                 }
             });
             const data = await response.json();
-            console.log("teoricamente agendametos", data)
             setAgendamentos(data);
         } catch (e) {
             console.log(e);
@@ -137,7 +70,7 @@ function Page() {
             const data = await response.json();
             setFuncionarios(data);
         } catch (error) {
-            console.log("nenhum funcionario");
+            console.log("Nenhum funcionario");
         }
     };
 
@@ -180,10 +113,8 @@ function Page() {
             )}
 
             {!!ajustarAgendamentos && (
-                <ModalAgendamentos data={data} onClose={() => setAjustarAgendamentos(false)} />
+                <ModalAgendamentos data={agendamentos} onClose={() => setAjustarAgendamentos(false)} />
             )}
-
-
 
             {!!principal && (
                 <>
@@ -260,7 +191,7 @@ function Page() {
                                     <span>Gerenciar Serviços</span>
                                     <span><BsCaretRightFill /></span>
                                 </button>
-                                <button className="w-full py-4 px-6 rounded-xl cursor-pointer text-white font-medium flex items-center justify-between transition-all duration-300 bg-gradient-to-r from-green-500 to-green-700 hover:from-green-700 hover:to-green-500"
+                                <button className="w-full py-4 px-6 rounded-xl cursor-pointer text-white font-medium flex items-center justify-between transition-all duration-300 bg-gradient-to-r from-yellow-500 to-yellow-700 hover:from-green-700 hover:to-green-500"
                                     onClick={() => {
                                         setAjustarAgendamentos(true)
                                     }}

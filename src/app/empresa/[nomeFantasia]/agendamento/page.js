@@ -103,7 +103,6 @@ export default function page() {
     async function getHours(data) {
         setSelectedDate(data);
         data = data.toISOString().split('T')[0];
-
         const response = await fetch(`${URL}/atendente/getHours/${atendenteId}`, {
             method: 'POST',
             headers: {
