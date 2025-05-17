@@ -10,10 +10,6 @@ function ModalFuncionarios({ empresa_id, funcionarios, onClose, onEdit }) {
     const [modalNovoFunc, setModalNovoFunc] = useState(false);
     const [selectedAtendente, setSelectedAtendente] = useState(null);
 
-    useEffect(() => {
-        console.log("funcionarios: ", funcionarios);
-    }, [funcionarios])
-
     return (
         <>
             {modalNovoFunc && (

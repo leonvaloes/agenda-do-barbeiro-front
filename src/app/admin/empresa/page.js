@@ -191,7 +191,7 @@ function Page() {
                                     <span>Gerenciar Serviços</span>
                                     <span><BsCaretRightFill /></span>
                                 </button>
-                                <button className="w-full py-4 px-6 rounded-xl cursor-pointer text-white font-medium flex items-center justify-between transition-all duration-300 bg-gradient-to-r from-yellow-500 to-yellow-700 hover:from-green-700 hover:to-green-500"
+                                <button className="w-full py-4 px-6 rounded-xl cursor-pointer text-white font-medium flex items-center justify-between transition-all duration-300 bg-gradient-to-r from-yellow-500 to-yellow-700 hover:from-yellow-700 hover:to-yellow-500"
                                     onClick={() => {
                                         setAjustarAgendamentos(true)
                                     }}
