@@ -3,14 +3,9 @@
 import { useEffect, useState } from 'react';
 import ModalFuncionarios from './dadosAtendente/Atendentes';
 import ModalAgendamentos from './EditAgendamentos/ModalAgendamentos ';
-
 import { useRouter } from 'next/navigation';
-
-
 import { BsCalendar2CheckFill, BsFillPeopleFill, BsCardChecklist, BsFillStarFill, BsCaretRightFill, BsPencil, BsTrash2 } from "react-icons/bs";
 import Cookies from 'js-cookie';
-import Table from '@/components/Table/Table';
-import ActionButtons from '@/components/ui/ActionButton';
 
 function Page() {
 

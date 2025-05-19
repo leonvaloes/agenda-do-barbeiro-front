@@ -19,8 +19,8 @@ function Page() {
     const [dadosEmpresa, setDadosEmpresa] = useState(null);
     const [servicos, setServicos] = useState([]);
 
-    const fetchServicosEmpresa = async (id)=>{
-        try{
+    const fetchServicosEmpresa = async (id) => {
+        try {
             const response = await fetch(`${URL}/empresa/listServ/${id}`, {
                 method: 'GET',
                 headers: {
@@ -29,7 +29,7 @@ function Page() {
             });
             const data = await response.json();
             setServicos(data);
-        }catch(e){
+        } catch (e) {
             console.log(e);
         }
     }
@@ -55,7 +55,7 @@ function Page() {
     }, []);
 
     useEffect(() => {
-        console.log("servicos: ",servicos);
+        console.log("servicos: ", servicos);
     }, [servicos]);
 
     return (
@@ -86,31 +86,6 @@ function Page() {
                     </div>
                 </div>
             </div>
-
-            {/* Destaques */}
-            {/* <div className="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-8">
-                <div className="bg-white p-6 rounded-xl shadow-md flex items-start">
-                    <FaAward className="text-blue-500 text-2xl mr-4" />
-                    <div>
-                        <h3 className="font-bold text-lg mb-2">Profissionais Certificados</h3>
-                        <p className="text-gray-600">Treinamento especializado e anos de experiência.</p>
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-md flex items-start">
-                    <FaStar className="text-blue-500 text-2xl mr-4" />
-                    <div>
-                        <h3 className="font-bold text-lg mb-2">Avaliação 4.8/5</h3>
-                        <p className="text-gray-600">Mais de 200 clientes satisfeitos com nossos serviços.</p>
-                    </div>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-md flex items-start">
-                    <FaSpa className="text-blue-500 text-2xl mr-4" />
-                    <div>
-                        <h3 className="font-bold text-lg mb-2">Produtos Premium</h3>
-                        <p className="text-gray-600">Utilizamos apenas marcas reconhecidas e de alta qualidade.</p>
-                    </div>
-                </div>
-            </div> */}
 
             {/* Serviços */}
             <section id="services" className="max-w-7xl mx-auto px-4 py-16">
@@ -143,6 +118,76 @@ function Page() {
                     ))}
                 </div>
             </section>
+
+            <div id="location" className="max-w-7xl mx-auto px-4 py-16 bg-white">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl font-bold mb-4">Nossa Localização</h2>
+                    <p className="text-gray-600 max-w-2xl mx-auto">
+                        Venha nos visitar em nosso espaço aconchegante no coração da cidade
+                    </p>
+                </div>
+                <div className="grid md:grid-cols-2 gap-12">
+                    <div className="map-container">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=..."
+                            width="100%"
+                            height="600"
+                            style={{ border: 0 }}
+                            allowFullScreen
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                        ></iframe>
+
+                    </div>
+                    <div className="space-y-6">
+                        <div className="info-card bg-gray-50 p-6 rounded-lg shadow-md">
+                            <div className="flex items-start">
+                                <div className="bg-blue-100 p-3 rounded-full mr-4">
+                                    <i className="fas fa-map-marker-alt text-blue-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-lg mb-1">Endereço</h3>
+                                    <p className="text-gray-600">Avenida Paulista, 1000</p>
+                                    <p className="text-gray-600">Bela Vista, São Paulo - SP</p>
+                                    <p className="text-gray-600">CEP: 01310-100</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="info-card bg-gray-50 p-6 rounded-lg shadow-md">
+                            <div className="flex items-start">
+                                <div className="bg-green-100 p-3 rounded-full mr-4">
+                                    <i className="fas fa-clock text-green-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-lg mb-1">Horário de Funcionamento</h3>
+                                    <p className="text-gray-600"><span className="font-medium">Segunda a Sexta:</span> 9:00 - 20:00</p>
+                                    <p className="text-gray-600"><span className="font-medium">Sábado:</span> 9:00 - 18:00</p>
+                                    <p className="text-gray-600"><span className="font-medium">Domingo:</span> Fechado</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="info-card bg-gray-50 p-6 rounded-lg shadow-md">
+                            <div className="flex items-start">
+                                <div className="bg-purple-100 p-3 rounded-full mr-4">
+                                    <i className="fas fa-subway text-purple-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-lg mb-1">Como Chegar</h3>
+                                    <p className="text-gray-600"><span className="font-medium">Metrô:</span> Estação Trianon-MASP (Linha 2-Verde)</p>
+                                    <p className="text-gray-600"><span className="font-medium">Ônibus:</span> Linhas 5101, 5102, 5171</p>
+                                    <p className="text-gray-600"><span className="font-medium">Estacionamento:</span> Temos convênio com o estacionamento ao lado</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 rounded-lg font-medium hover:shadow-lg transition flex items-center justify-center">
+                            <i className="fas fa-directions mr-2"></i> Obter Rotas
+                        </button>
+                    </div>
+                </div>
+            </div>
         </>
     );
 }

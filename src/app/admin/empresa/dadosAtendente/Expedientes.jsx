@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { BsFillPencilFill, BsCalendar2EventFill, BsFilePerson, BsXLg, BsArrowLeft, BsSave } from "react-icons/bs";
+import { BsArrowLeft, BsSave } from "react-icons/bs";
 
 function ModalFuncionarios({ onClose }) {
 
