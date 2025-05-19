@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Table from '@/components/Table/Table';
 import { parseISO } from 'date-fns';
 
-const URL = 'http://localhost:3000'; // ajuste conforme necessário
+const URL = 'http://localhost:3000';
 
 export default function ModalAgendamentos({ onClose, data }) {
     const [remarcarModalOpen, setRemarcarModalOpen] = useState(false);
@@ -76,16 +76,35 @@ export default function ModalAgendamentos({ onClose, data }) {
         await getHours(novaDataSelecionada);
     };
 
-    const handleChangeHora = async (e) => {
+    const handleChangeHora = (e) => {
         const novoHorario = e.target.value;
         setNovaHora(novoHorario);
-        await getHours(novaData);
     };
 
-    const handleSalvarRemarcacao = () => {
-        console.log('Agendamento para remarcar:', agendamentoSelecionado);
-        console.log('Nova data:', novaData);
-        console.log('Nova hora:', novaHora);
+    const handleSalvarRemarcacao = async () => {
+        const data_hora = `${novaData} ${novaHora}`;
+        try {
+            const response = await fetch(`${URL}/empresa/reagendamento`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    item_id: agendamentoSelecionado.item_id,
+                    nova_data: data_hora,
+                    atendente_id: agendamentoSelecionado.atendente_id,
+                    agendamento_id: agendamentoSelecionado.id,
+                    servicos:{
+                        id: agendamentoSelecionado.servicos_id,
+                        tempo_medio: agendamentoSelecionado.tempo_medio,
+                        item_id: agendamentoSelecionado.servicos_item_id,
+                    }
+                })
+            })
+            if (!response.ok) {
+                throw new Error('Erro ao atualizar');
+            }
+        } catch (error) {
+            console.error('Erro ao remarcar agendamento:', error);
+        }
         setRemarcarModalOpen(false);
     };
 
@@ -100,7 +119,7 @@ export default function ModalAgendamentos({ onClose, data }) {
                     >
                         &times;
                     </button>
-                    <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Ajustar Agendamentos</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Reagendamento</h2>
 
                     <Table columns={columns} data={data} />
                 </div>
@@ -145,11 +164,10 @@ export default function ModalAgendamentos({ onClose, data }) {
                                 value={novaHora}
                                 onChange={handleChangeHora}
                                 disabled={!horarios.length}
-                                className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 transition ${
-                                    horarios.length
-                                        ? 'border-gray-300 focus:ring-blue-500'
-                                        : 'border-gray-200 bg-gray-100 cursor-not-allowed'
-                                }`}
+                                className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 transition ${horarios.length
+                                    ? 'border-gray-300 focus:ring-blue-500'
+                                    : 'border-gray-200 bg-gray-100 cursor-not-allowed'
+                                    }`}
                             >
                                 <option value="">Selecione um horário</option>
                                 {horarios.map((item, i) => {
@@ -169,11 +187,10 @@ export default function ModalAgendamentos({ onClose, data }) {
                         </div>
 
                         <button
-                            className={`w-full text-white px-4 py-3 rounded-md font-semibold transition ${
-                                novaData && novaHora
-                                    ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
-                                    : 'bg-blue-400 cursor-not-allowed opacity-70'
-                            }`}
+                            className={`w-full text-white px-4 py-3 rounded-md font-semibold transition ${novaData && novaHora
+                                ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
+                                : 'bg-blue-400 cursor-not-allowed opacity-70'
+                                }`}
                             onClick={handleSalvarRemarcacao}
                             disabled={!novaData || !novaHora}
                         >

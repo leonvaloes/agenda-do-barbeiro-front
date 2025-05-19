@@ -10,7 +10,7 @@ function Table({ data, columns, setSelectedLine }) {
       <table className="w-full text-sm sm:text-base text-left border-collapse table-auto">
         {isListValid ? (
           <>
-            <thead className="bg-blue-300 text-white uppercase tracking-wide">
+            <thead className=" uppercase tracking-wide">
               <tr>
                 {columns.map((column) => (
                   <th

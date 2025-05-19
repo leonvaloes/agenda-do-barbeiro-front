@@ -4,11 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { BsFillPencilFill, BsCalendar2EventFill, BsFilePerson, BsXLg } from "react-icons/bs";
 import ModalEditarAtendente from './EditAtendentes';
 import ModalNovoFunc from './NewAtendente';
+import ModalExpediente from './Expedientes';
 
 function ModalFuncionarios({ empresa_id, funcionarios, onClose, onEdit }) {
     const [modalEditAtendente, setModalEditAtendente] = useState(false);
+    const [modalExpediente, setModalExpediente] = useState(false);
     const [modalNovoFunc, setModalNovoFunc] = useState(false);
     const [selectedAtendente, setSelectedAtendente] = useState(null);
+    const [selectedExpedienteAtendente, setSelectedExpedienteAtendente] = useState(null);
 
     return (
         <>
@@ -25,6 +28,16 @@ function ModalFuncionarios({ empresa_id, funcionarios, onClose, onEdit }) {
                     onClose={() => setModalEditAtendente(false)}
                 />
             )}
+
+            {modalExpediente && selectedExpedienteAtendente && (
+                <ModalExpediente
+                    empresa_id={empresa_id}
+                    funcionario={selectedExpedienteAtendente}
+                    onClose={() => setModalExpediente(false)}
+                    onEdit={onEdit}
+                />
+            )}
+
 
             <div className="inset-0 bg-white bg-opacity-50 flex items-center justify-center flex-col">
                 <div className="p-6 rounded-lg shadow-lg w-[90%] max-w-[800px] flex flex-col items-center space-y-6 overflow-y-auto bg-white">
@@ -88,11 +101,15 @@ function ModalFuncionarios({ empresa_id, funcionarios, onClose, onEdit }) {
                                 <div className="flex justify-between pt-4 mt-4 border-t border-gray-200">
                                     <button
                                         className="cursor-pointer px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white flex items-center gap-2"
-                                        onClick={() => onEdit(i)}
+                                        onClick={() => {
+                                            setSelectedExpedienteAtendente(funcionario); // salvar o atendente
+                                            setModalExpediente(true); // abrir o modal
+                                        }}
                                     >
                                         <BsCalendar2EventFill />
                                         Expediente
                                     </button>
+
                                     <button
                                         className="cursor-pointer px-3 py-2 rounded-md text-sm font-medium bg-blue-600 text-white flex items-center gap-2"
                                         onClick={() => {
@@ -112,7 +129,6 @@ function ModalFuncionarios({ empresa_id, funcionarios, onClose, onEdit }) {
                             </div>
                         ))}
                     </div>
-
                     <button
                         className="cursor-pointer w-full bg-red-500 hover:bg-red-600 text-white mt-6 py-2 rounded-md max-w-[300px] transition"
                         onClick={onClose}
