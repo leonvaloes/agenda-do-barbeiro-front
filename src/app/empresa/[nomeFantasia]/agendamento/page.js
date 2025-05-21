@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { format,parseISO, startOfMonth, endOfMonth, addDays, subMonths, addMonths, isSameDay } from 'date-fns';
+import { format, parseISO, startOfMonth, endOfMonth, addDays, subMonths, addMonths, isSameDay } from 'date-fns';
 import { BsClockHistory, BsX, BsFillPersonFill, BsFillPencilFill, BsClockFill } from "react-icons/bs";
 import { ptBR } from 'date-fns/locale';
 import { toast } from "react-toastify";
@@ -52,8 +52,8 @@ export default function page() {
         days.push(day);
     }
 
-    async function getCliente(UserId){
-        const response= await fetch(`${URL}/cliente/${UserId}`, {
+    async function getCliente(UserId) {
+        const response = await fetch(`${URL}/cliente/${UserId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -63,8 +63,8 @@ export default function page() {
             throw new Error('Erro ao buscar cliente');
         }
 
-        const data=await response.json();
-        console.log("CLIENTE: ",data[0]);
+        const data = await response.json();
+        console.log("CLIENTE: ", data[0]);
         setCliente(data[0]);
     }
 
@@ -415,7 +415,11 @@ export default function page() {
                             {Hours.filter((item) => {
                                 const dateOnly = format(parseISO(item.data_hora), "yyyy-MM-dd");
                                 const selectedOnly = format(selectedDate, "yyyy-MM-dd");
-                                return dateOnly === selectedOnly;
+                                const isSameDay = dateOnly === selectedOnly;
+
+                                const isFuture = parseISO(item.data_hora) > new Date();
+
+                                return isSameDay && isFuture;
                             }).map((item, i) => {
                                 const timeObj = parseISO(item.data_hora);
                                 const formattedTime = timeObj.toLocaleTimeString("pt-BR", {

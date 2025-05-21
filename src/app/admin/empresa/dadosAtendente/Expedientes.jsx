@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { BsArrowLeft, BsSave } from "react-icons/bs";
 
-function ModalFuncionarios({ onClose }) {
+function ModalFuncionarios({ funcionario ,onClose }) {
 
     const URL = "http://localhost:3000";
 
@@ -17,6 +17,8 @@ function ModalFuncionarios({ onClose }) {
         { dia: 'Sábado', dia_semana: 7, entrada: '00:00', intervalo: '00:00', tempo: '00:00', saida: '00:00' }
     ]);
 
+
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setDados(prev => ({ ...prev, [name]: value }));
@@ -28,6 +30,43 @@ function ModalFuncionarios({ onClose }) {
         updated[index][field] = value;
         setExpediente(updated);
     };
+
+    useEffect(() => {
+        const fetchExpediente = async () => {
+            try {
+                const response = await fetch(`${URL}/atendente/getExpediente/${funcionario.atendente_id}`,{
+                    method:'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) throw new Error("Erro ao buscar expediente");
+
+                const data = await response.json();
+
+                const diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+
+
+                const formatado = data.map((item, index) => ({
+                    dia: diasSemana[index],
+                    dia_semana: index + 1,
+                    entrada: item.data_hora_entrada?.substring(0, 5) || '10:00',
+                    intervalo: item.data_hora_intervalo?.substring(0, 5) || '00:00',
+                    tempo: item.tempo_intervalo?.toString() || '00',
+                    saida: item.data_hora_saida?.substring(0, 5) || '00:00'
+                }));
+
+                setExpediente(formatado);
+                console.log(formatado);
+            } catch (error) {
+                console.error("Erro:", error);
+            }
+        };
+        console.log(funcionario)
+        fetchExpediente();
+    }, []);
+
+
 
     return (
         <>

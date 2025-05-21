@@ -48,15 +48,25 @@ export default function Header() {
               <ul className="space-y-2">
                 {(role === 'EMPRESA' || role === 'ATENDENTE') && (
                   <>
-                    <li>
+                    {/* <li>
                       <a href="#" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
                         Dashboard
                       </a>
-                    </li>
+                    </li> */}
 
                     <li>
-                      <span onClick={()=>router.push('./relatorio')} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                      <span onClick={()=>router.push('/relatorio')} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
                         Relatórios
+                      </span>
+                    </li>
+                  </>
+                )}
+                
+                {role === "ATENDENTE" && (
+                  <>
+                    <li>
+                      <span onClick={()=>router.push('/ocuparDia')} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                        Dia livre
                       </span>
                     </li>
                   </>

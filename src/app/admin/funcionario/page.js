@@ -98,7 +98,7 @@ function page() {
 
     return (
         <>
-            <main className="flex-grow container mx-auto px-4 py-6">
+            <div className="flex-grow container mx-auto px-4 py-6">
                 <div className="mb-8">
                     <h2 className="text-2xl font-bold text-gray-800 mb-1">
                         Olá, {dadosUserAtendente?.nome}!
@@ -165,7 +165,7 @@ function page() {
                     <span onClick={()=>router.push('./funcionario/agendamentos')} className='text-sm text-blue-600 cursor-pointer'>Ver mais</span>
                 </div>
 
-            </main>
+            </div>
         </>
     );
 }

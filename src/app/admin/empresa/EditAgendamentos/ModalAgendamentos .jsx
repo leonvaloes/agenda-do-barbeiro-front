@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Table from '@/components/Table/Table';
-import { parseISO } from 'date-fns';
+import { parseISO, format } from 'date-fns';
 
 const URL = 'http://localhost:3000';
 
@@ -92,7 +92,7 @@ export default function ModalAgendamentos({ onClose, data }) {
                     nova_data: data_hora,
                     atendente_id: agendamentoSelecionado.atendente_id,
                     agendamento_id: agendamentoSelecionado.id,
-                    servicos:{
+                    servicos: {
                         id: agendamentoSelecionado.servicos_id,
                         tempo_medio: agendamentoSelecionado.tempo_medio,
                         item_id: agendamentoSelecionado.servicos_item_id,
@@ -170,20 +170,29 @@ export default function ModalAgendamentos({ onClose, data }) {
                                     }`}
                             >
                                 <option value="">Selecione um horário</option>
-                                {horarios.map((item, i) => {
-                                    const timeObj = parseISO(item.data_hora);
-                                    const formattedTime = timeObj.toLocaleTimeString("pt-BR", {
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                    });
+                                {horarios
+                                    .filter((item) => {
+                                        const dataHora = parseISO(item.data_hora);
+                                        const dataItem = format(dataHora, "yyyy-MM-dd");
+                                        const dataSelecionada = format(parseISO(novaData), "yyyy-MM-dd");
 
-                                    return (
-                                        <option key={item.id || i} value={formattedTime}>
-                                            {formattedTime}
-                                        </option>
-                                    );
-                                })}
+                                        const isSameDay = dataItem === dataSelecionada;
+                                        const isFuture = dataHora > new Date();
+
+                                        return isSameDay && isFuture;
+                                    })
+                                    .map((item, i) => {
+                                        const dataHora = parseISO(item.data_hora);
+                                        const formattedTime = format(dataHora, "HH:mm");
+
+                                        return (
+                                            <option key={item.id || i} value={formattedTime}>
+                                                {formattedTime}
+                                            </option>
+                                        );
+                                    })}
                             </select>
+
                         </div>
 
                         <button
