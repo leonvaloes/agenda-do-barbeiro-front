@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Table from '@/components/Table/Table';
-import { parseISO, format } from 'date-fns';
+import { parseISO, format,isAfter  } from 'date-fns';
 
 const URL = 'http://localhost:3000';
 
@@ -12,6 +12,14 @@ export default function ModalAgendamentos({ onClose, data }) {
     const [novaData, setNovaData] = useState('');
     const [novaHora, setNovaHora] = useState('');
     const [horarios, setHorarios] = useState([]);
+
+    const agendamentosFuturos = data.filter((agendamento) => {
+        const agendamentoDate = parseISO(agendamento.data_hora);
+        return (
+            isAfter(agendamentoDate, new Date()) &&
+            agendamento.estado?.toLowerCase()!=='cancelado'
+        );
+    });
 
     const columns = [
         { field: "nome_cliente", headerName: "Cliente" },
@@ -121,7 +129,7 @@ export default function ModalAgendamentos({ onClose, data }) {
                     </button>
                     <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Reagendamento</h2>
 
-                    <Table columns={columns} data={data} />
+                    <Table columns={columns} data={agendamentosFuturos} />
                 </div>
             </div>
 
@@ -192,9 +200,7 @@ export default function ModalAgendamentos({ onClose, data }) {
                                         );
                                     })}
                             </select>
-
                         </div>
-
                         <button
                             className={`w-full text-white px-4 py-3 rounded-md font-semibold transition ${novaData && novaHora
                                 ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'

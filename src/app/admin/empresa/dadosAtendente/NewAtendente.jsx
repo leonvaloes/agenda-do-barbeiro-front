@@ -11,13 +11,13 @@ export default function NewAtendente({ Empresa_id, onClose }) {
     const [modalNew, setModalNew] = useState(true);
 
     const [expediente, setExpediente] = useState([
-        { dia: 'Domingo', dia_semana: 1, entrada: '00:00', intervalo: '00:00', tempo: '00:00', saida: '00:00' },
-        { dia: 'Segunda', dia_semana: 2, entrada: '00:00', intervalo: '00:00', tempo: '00:00', saida: '00:00' },
-        { dia: 'Terça', dia_semana: 3, entrada: '00:00', intervalo: '00:00', tempo: '00:00', saida: '00:00' },
-        { dia: 'Quarta', dia_semana: 4, entrada: '00:00', intervalo: '00:00', tempo: '00:00', saida: '00:00' },
-        { dia: 'Quinta', dia_semana: 5, entrada: '00:00', intervalo: '00:00', tempo: '00:00', saida: '00:00' },
-        { dia: 'Sexta', dia_semana: 6, entrada: '00:00', intervalo: '00:00', tempo: '00:00', saida: '00:00' },
-        { dia: 'Sábado', dia_semana: 7, entrada: '00:00', intervalo: '00:00', tempo: '00:00', saida: '00:00' }
+        { dia: 'Domingo', dia_semana: 1, entrada: '00:00', intervalo: null, tempo: null, saida: '00:00' },
+        { dia: 'Segunda', dia_semana: 2, entrada: '00:00', intervalo: null, tempo: null, saida: '00:00' },
+        { dia: 'Terça', dia_semana: 3, entrada: '00:00', intervalo: null, tempo: null, saida: '00:00' },
+        { dia: 'Quarta', dia_semana: 4, entrada: '00:00', intervalo: null, tempo: null, saida: '00:00' },
+        { dia: 'Quinta', dia_semana: 5, entrada: '00:00', intervalo: null, tempo: null, saida: '00:00' },
+        { dia: 'Sexta', dia_semana: 6, entrada: '00:00', intervalo: null, tempo: null, saida: '00:00' },
+        { dia: 'Sábado', dia_semana: 7, entrada: '00:00', intervalo: null, tempo: null, saida: '00:00' }
     ]);
 
     const [dados, setDados] = useState({
@@ -89,7 +89,6 @@ export default function NewAtendente({ Empresa_id, onClose }) {
             const data = await response.json();
 
             if (response.ok) {
-                console.log("DATA AQUI CARALHO: ", data);
                 fetchExpediente(data.id);
             } else {
                 toast.error("Erro ao cadastrar atendente!", { position: "top-center" });

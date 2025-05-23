@@ -55,17 +55,17 @@ export default function Header() {
                     </li> */}
 
                     <li>
-                      <span onClick={()=>router.push('/relatorio')} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                      <span onClick={() => router.push('/relatorio')} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
                         Relatórios
                       </span>
                     </li>
                   </>
                 )}
-                
+
                 {role === "ATENDENTE" && (
                   <>
                     <li>
-                      <span onClick={()=>router.push('/ocuparDia')} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                      <span onClick={() => router.push('/ocuparDia')} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
                         Dia livre
                       </span>
                     </li>
@@ -75,33 +75,37 @@ export default function Header() {
                 {role === "CLIENTE" && (
                   <>
                     <li>
-                      <span onClick={()=>router.push('/cliente')} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                      <span onClick={() => router.push('/cliente')} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
                         Agendamentos recentes
                       </span>
                     </li>
                   </>
                 )}
-                {!token &&(
+                {!token && (
                   <li>
                     <a href="../auth" className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
                       Entrar
                     </a>
                   </li>
                 )}
-                
-                <li>
-                  <a
-                    href="#"
-                    className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      Object.keys(Cookies.get()).forEach(cookie => Cookies.remove(cookie));
-                      router.push('/auth');
-                    }}
-                  >
-                    Sair
-                  </a>
-                </li>
+
+                {token && (
+                  <li>
+                    <a
+                      href="#"
+                      className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        Object.keys(Cookies.get()).forEach(cookie => Cookies.remove(cookie));
+                        router.push('/auth');
+                      }}
+                    >
+                      Sair
+                    </a>
+                  </li>
+                )}
+
+
               </ul>
             </nav>
           </div>

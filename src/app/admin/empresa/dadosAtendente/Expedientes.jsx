@@ -154,7 +154,7 @@ function ModalFuncionarios({ funcionario ,onClose }) {
                             <button
                                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
                             >
-                                <BsSave className="mr-2" /> Salvar Atendente
+                                <BsSave className="mr-2" /> Salvar expediente
                             </button>
                         </div>
                     </div>
