@@ -6,12 +6,16 @@ import { format, parseISO, startOfMonth, endOfMonth, addDays, subMonths, addMont
 import { BsClockHistory, BsX, BsFillPersonFill, BsFillPencilFill, BsClockFill } from "react-icons/bs";
 import { ptBR } from 'date-fns/locale';
 import { toast } from "react-toastify";
-import ConfirmButton from '@/components/button/ConfirmButton';
+import Button from '@/components/buttons/Button';
 import Cookies from 'js-cookie';
+import { useRouter } from "next/navigation";
+
 
 export default function page() {
     const { nomeFantasia } = useParams();
     const URL = "http://localhost:3000"
+
+    const router= useRouter()
 
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState(null);
@@ -208,6 +212,16 @@ export default function page() {
         setModalAgenda(false);
     }
 
+    const VoltarAtendente=()=>{
+        setModalAtendente(true);
+        setModalAgenda(false);
+    }
+
+    const VoltarServico=()=>{
+        setModalService(true);
+        setModalAtendente(false);
+    }
+
     useEffect(() => {
         const idUser = Cookies.get('id');
         fetchDadosEmpresa();
@@ -241,12 +255,11 @@ export default function page() {
                             <span className='text-gray-600 '>Aguarde o atendente confirmar seu agendamento, te avisaremos quando isso acontecer</span>
                         </div>
                         <div className="w-full flex justify-end p-[10px]">
-                            <button
-                                className="min-w-[100px] min-h-[40px] max-w-[100px] text-white rounded-[4px] bg-blue-500 cursor-pointer"
-                                onClick={() => setModalConcluido(false)}
+                            <Button
+                                onClick={() =>router.push('/cliente')}
+                                childreen={"Ok!"}
                             >
-                                Ok!
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -258,7 +271,7 @@ export default function page() {
                         <h2 className=" text-2xl font-bold text-center p-[30px]">Agendamento NÃO concluido!</h2>
                         <hr className='w-full text-gray-600' />
                         <h2 className='text-center text-gray-600'>Selecione outro horário para o agendamento!</h2>
-                        <ConfirmButton onClick={() => setModalCancelado(false)}>Fechar</ConfirmButton>
+                        <Button onClick={() => setModalCancelado(false)} childreen={"Fechar"}></Button>
                     </div>
                 </div>
             )}
@@ -325,7 +338,8 @@ export default function page() {
 
             {!!modalAtendente && selectedService !== null && (
                 <main className="container mx-auto px-4 py-8 bg-white">
-                    <div className="text-center mb-10">
+                
+                    <div className="text-center mt-8 mb-10">
                         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">Escolha o atendente</h1>
                         <p className="text-gray-600 max-w-2xl mx-auto">Escolha entre nossos profissionais para realizar o atendimento para você.</p>
                     </div>
@@ -349,11 +363,13 @@ export default function page() {
                             </div>
                         ))}
                     </div>
+                    <Button  childreen={"Voltar"} onClick={()=>VoltarServico()}></Button>
                 </main>
             )}
 
             {!!ModalAgenda && (
                 <div className="container mx-auto px-4 py-8 space-y-8">
+                    
                     <div className="w-full flex items-center justify-center flex-col">
                         <span className="text-3xl md:text-4xl font-bold text-gray-800 mb-3 text-center">Escolha uma data e um horário</span>
                         <span className="text-gray-600 max-w-2xl mx-auto text-center">Escolha um dia e um horário disponivel que for mais conveniente para você.</span>
@@ -444,16 +460,22 @@ export default function page() {
                             })}
                         </div>
                     </div>
+
                     {selectedDate && selectedTime && (
                         <div className="flex justify-center mt-6">
-                            <ConfirmButton
+                            <Button
                                 onClick={handleSelectTime}
                                 className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition"
+                                childreen={"Continuar"}
                             >
-                                Continuar
-                            </ConfirmButton>
+                            </Button>
                         </div>
                     )}
+                    <Button  
+                        childreen={"Voltar"}
+                        onClick={() =>VoltarAtendente()}>
+                        
+                    </Button>
                 </div>
             )}
 

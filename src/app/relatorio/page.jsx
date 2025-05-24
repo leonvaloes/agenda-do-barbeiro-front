@@ -1,10 +1,50 @@
-// pages/relatorio.jsx
+'use client'
+
+import Button from "@/components/buttons/ButtonBack";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { BsCalendar3 } from "react-icons/bs";
+import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 export default function page() {
+
+  const URL = "http://localhost:3000";
+  const idUser = Cookies.get('id');
+
+  const [dataInicio, setDataInicio] = useState();
+  const [dataFim, setDataFim] = useState();
+
+  const router = useRouter();
+
+  const handleFiltrar = () => {
+    try {
+      if (dataInicio!=null && dataFim!=null && dataInicio < dataFim) {
+        const response = fetch(`${URL}/agendamento/getRelatorio/${idUser}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ dataInicio, dataFim })
+        });
+
+        if(response.ok){
+          const data = response.json();
+          console.log("Agendamentos", data);
+        }
+      }
+      else{
+        toast.error("Periodo inválido !", { position: "top-center" });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="container mx-auto px-4 py-8">
+        <Button onClick={() => router.back()} childreen={"Voltar"}></Button>
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-indigo-800 flex items-center">
             Relatório de Agendamentos
@@ -25,8 +65,9 @@ export default function page() {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Data Inicial
                     </label>
+
                     <div className="relative">
-                      <input type="date" id="startDate" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
+                      <input type="date" id="startDate" onChange={(e) => setDataInicio(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
                     </div>
                   </div>
 
@@ -39,7 +80,7 @@ export default function page() {
                       Data Final
                     </label>
                     <div className="relative">
-                      <input type="date" id="endDate" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
+                      <input type="date" id="endDate" onChange={(e) => setDataFim(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
                     </div>
                   </div>
                 </div>
@@ -47,7 +88,7 @@ export default function page() {
             </div>
 
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
-              <button className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center">
+              <button onClick={handleFiltrar} className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center">
                 Filtrar Agendamentos
               </button>
               <button className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center">
@@ -66,7 +107,7 @@ export default function page() {
               <h3 className="text-xl font-medium text-gray-700 mb-2">Nenhum agendamento encontrado</h3>
               <p className="text-gray-500 text-center max-w-md">Ajuste os filtros de data para visualizar os agendamentos.</p>
             </div>
-            
+
           </div>
         </div>
 
