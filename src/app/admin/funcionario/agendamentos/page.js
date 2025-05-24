@@ -3,10 +3,13 @@
 import Table from "@/components/Table/Table";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
+import ButtonBack from "@/components/buttons/ButtonBack";
+import { useRouter } from "next/navigation";
 import { BsPlusLg, BsCalendar2CheckFill, BsCheckCircle, BsClock, BsXCircle } from "react-icons/bs";
 
 function page() {
     const URL = "http://localhost:3000";
+    const router=useRouter();
 
     const columns = [
         { field: "nome_cliente", headerName: "Cliente" },
@@ -92,6 +95,7 @@ function page() {
     return (
         <>
             <div className="container mx-auto px-4 py-6">
+                <ButtonBack childreen={"Voltar"} onClick={()=>router.back()}></ButtonBack>
                 <div className="mb-8 flex flex-col lg:flex-row w-full justify-between items-start lg:items-center gap-4">
                     <div>
                         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">

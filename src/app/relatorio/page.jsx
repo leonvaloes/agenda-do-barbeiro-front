@@ -3,7 +3,7 @@
 import Button from "@/components/buttons/ButtonBack";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { BsCalendar3 } from "react-icons/bs";
+import { BsCalendar3, BsCardChecklist } from "react-icons/bs";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 
@@ -15,25 +15,34 @@ export default function page() {
   const [dataInicio, setDataInicio] = useState();
   const [dataFim, setDataFim] = useState();
 
+  const [agendamentos, setAgendamentos] = useState(null);
+
+
   const router = useRouter();
 
-  const handleFiltrar = () => {
+  async function handleFiltrar() {
     try {
-      if (dataInicio!=null && dataFim!=null && dataInicio < dataFim) {
-        const response = fetch(`${URL}/agendamento/getRelatorio/${idUser}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ dataInicio, dataFim })
-        });
+      if (dataInicio != null && dataFim != null && dataInicio < dataFim) {
+        console.log("Data Inicio", dataInicio);
+        console.log("Data Fim", dataFim);
+        console.log("ID", idUser);
 
-        if(response.ok){
-          const data = response.json();
-          console.log("Agendamentos", data);
+        const response = await fetch(
+          `${URL}/agendamento/getRelatorio/${idUser}?dataInicio=${encodeURIComponent(dataInicio)}&dataFim=${encodeURIComponent(dataFim)}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          setAgendamentos(data);
         }
       }
-      else{
+      else {
         toast.error("Periodo inválido !", { position: "top-center" });
       }
     } catch (e) {
@@ -99,14 +108,82 @@ export default function page() {
         </div>
         <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8 transition-all duration-300 hover:shadow-lg">
           <div className="p-6">
-            <h1 className="flex gap-[10px] items-center text-bold text-2xl">
-              <i className="text-[16px]"><BsCalendar3 /></i>
+            <h1 className="flex gap-[10px] items-center text-bold text-2xl mb-8">
+              <i className="text-[16px] "><BsCalendar3 /></i>
               Resultados
             </h1>
-            <div id="emptyState" className="hidden flex flex-col items-center justify-center py-12">
-              <h3 className="text-xl font-medium text-gray-700 mb-2">Nenhum agendamento encontrado</h3>
-              <p className="text-gray-500 text-center max-w-md">Ajuste os filtros de data para visualizar os agendamentos.</p>
-            </div>
+
+
+
+
+            {agendamentos === null ? (
+              <p className="text-gray-500 col-span-full">Ajuste os filtros de data para visualizar os agendamentos.</p>
+            ) : agendamentos.length === 0 ? (
+              <p className="text-gray-500 col-span-full">Nenhum agendamento encontrado.</p>
+            ) : (
+              <>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                  <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+                    <div className="flex items-center">
+                      <div className="p-2 bg-blue-100 rounded-full text-blue-500 mr-3">
+                        <i><BsCardChecklist /></i>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Total Agendamentos</p>
+                        <h3 className="text-xl font-bold">{agendamentos?.length ?? 0}</h3>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+                    <div className="flex items-center">
+                      <div className="p-2 bg-green-100 rounded-full text-green-500 mr-3">
+                        <i><BsCardChecklist /></i>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Total Ganho</p>
+                        <h3 className="text-xl font-bold">
+                          R$ {agendamentos
+                            ?.filter(ag => ag.estado === "concluído")
+                            .reduce((acc, ag) => acc + Number(ag.valor || 0), 0)
+                            .toFixed(2)}
+
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {agendamentos.map((agendamento, index) => (
+                    <div
+                      key={index}
+                      className={`rounded p-4 shadow-sm bg-white border-l-4 ${agendamento.estado === 'concluído'
+                        ? 'border-green-500'
+                        : agendamento.estado === 'cancelado'
+                          ? 'border-red-500'
+                          : agendamento.estado === 'confirmação'
+                            ? 'border-yellow-500'
+                            : 'border-blue-500'
+                        }`}
+                    >
+                      <p><strong>Estado:</strong> {agendamento.estado}</p>
+                      <p><strong>Cliente:</strong> {agendamento.nome_cliente}</p>
+                      <p><strong>Valor:</strong> R$ {agendamento.valor}</p>
+                      <p><strong>Data/Hora:</strong> {new Date(agendamento.data_hora).toLocaleString()}</p>
+                      <p><strong>Atendente:</strong> {agendamento.nome_atendente}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+
+
+
+
 
           </div>
         </div>

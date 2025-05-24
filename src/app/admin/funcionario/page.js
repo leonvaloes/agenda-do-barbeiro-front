@@ -36,7 +36,6 @@ function page() {
         }
     }
 
-
     const fetchGetAgendamentosDoDia = async (id) => {
         try {
             const response = await fetch(`${URL}/agendamento/getAgendamentosDoDiaByAtendente/${id}`, {
@@ -52,9 +51,6 @@ function page() {
         }
     }
     
-
-
-
     const fetchGetInfoUserByAtendenteId = async (Userid) => {
         try {
             const response = await fetch(`${URL}/atendente/getInfoUserByUserId/${Userid}`, {
