@@ -92,6 +92,10 @@ function Page() {
     };
 
     useEffect(() => {
+        const role= Cookies.get('role');
+        if(role !== 'EMPRESA'){
+            router.push('/auth');
+        }
         const idUser = Cookies.get('id');
         fetchGetEmpresaByIdUser(idUser);
     }, []);

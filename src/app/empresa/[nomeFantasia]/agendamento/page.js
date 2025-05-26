@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import Button from '@/components/buttons/Button';
 import Cookies from 'js-cookie';
 import { useRouter } from "next/navigation";
+import ButtonBack from '@/components/buttons/ButtonBack';
 
 
 export default function page() {
@@ -309,6 +310,7 @@ export default function page() {
             {!!modalService && (
                 <>
                     <main className="container mx-auto px-4 py-8">
+                        <ButtonBack childreen={"Voltar"} onClick={()=>router.back()}></ButtonBack>
                         <div className="text-center mb-10">
                             <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-3">Agende seu serviço</h1>
                             <p className="text-gray-600 max-w-2xl mx-auto">Escolha entre nossos serviços profissionais e agende no horário mais conveniente para você.</p>

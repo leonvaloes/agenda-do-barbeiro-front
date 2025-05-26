@@ -4,8 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Cookies from 'js-cookie';
 
-import CalendarCarousel from "@/components/calendarCarousel/calendarCarousel";
-
 import {
     FaCut,
     FaCalendarAlt,
@@ -16,9 +14,9 @@ function Page() {
 
     const router = useRouter();
     const { nomeFantasia } = useParams();
-    const [dadosEmpresa, setDadosEmpresa] = useState(null);
+    const [dadosEmpresa, setDadosEmpresa] = useState("");
     const [servicos, setServicos] = useState([]);
-
+    
     const fetchServicosEmpresa = async (id) => {
         try {
             const response = await fetch(`${URL}/empresa/listServ/${id}`, {
@@ -54,10 +52,6 @@ function Page() {
         fetchDadosEmpresa();
     }, []);
 
-    useEffect(() => {
-        console.log("servicos: ", servicos);
-    }, [servicos]);
-
     return (
         <>
             {/* Banner */}
@@ -74,7 +68,7 @@ function Page() {
                                 href="#services"
                                 className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-3 rounded-lg font-medium hover:shadow-lg transition"
                             >
-                                <FaCut className="inline mr-2" /> Nossos Serviços
+                               Nossos Serviços
                             </a>
                             <button
                                 className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition"
@@ -129,14 +123,15 @@ function Page() {
                 <div className="grid md:grid-cols-2 gap-12">
                     <div className="map-container">
                         <iframe
-                            src="https://www.google.com/maps/embed?pb=..."
+                            src={`https://www.google.com/maps?q=${encodeURIComponent(`${dadosEmpresa.endereco}, ${dadosEmpresa.cidade}, ${dadosEmpresa.estado}, ${dadosEmpresa.cep}`)}&output=embed`}
                             width="100%"
                             height="600"
                             style={{ border: 0 }}
                             allowFullScreen
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
-                        ></iframe>
+                        />
+
 
                     </div>
                     <div className="space-y-6">
@@ -147,9 +142,9 @@ function Page() {
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-lg mb-1">Endereço</h3>
-                                    <p className="text-gray-600">Avenida Paulista, 1000</p>
-                                    <p className="text-gray-600">Bela Vista, São Paulo - SP</p>
-                                    <p className="text-gray-600">CEP: 01310-100</p>
+                                    <p className="text-gray-600">{dadosEmpresa.endereco}</p>
+                                    <p className="text-gray-600">{dadosEmpresa.cidade}, {dadosEmpresa.estado}</p>
+                                    <p className="text-gray-600">CEP: {dadosEmpresa.cep}</p>
                                 </div>
                             </div>
                         </div>
@@ -167,24 +162,6 @@ function Page() {
                                 </div>
                             </div>
                         </div>
-
-                        <div className="info-card bg-gray-50 p-6 rounded-lg shadow-md">
-                            <div className="flex items-start">
-                                <div className="bg-purple-100 p-3 rounded-full mr-4">
-                                    <i className="fas fa-subway text-purple-600 text-xl"></i>
-                                </div>
-                                <div>
-                                    <h3 className="font-bold text-lg mb-1">Como Chegar</h3>
-                                    <p className="text-gray-600"><span className="font-medium">Metrô:</span> Estação Trianon-MASP (Linha 2-Verde)</p>
-                                    <p className="text-gray-600"><span className="font-medium">Ônibus:</span> Linhas 5101, 5102, 5171</p>
-                                    <p className="text-gray-600"><span className="font-medium">Estacionamento:</span> Temos convênio com o estacionamento ao lado</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-3 rounded-lg font-medium hover:shadow-lg transition flex items-center justify-center">
-                            <i className="fas fa-directions mr-2"></i> Obter Rotas
-                        </button>
                     </div>
                 </div>
             </div>

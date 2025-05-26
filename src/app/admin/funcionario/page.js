@@ -14,13 +14,13 @@ function page() {
     const [dadosUserAtendente, setDadosUserAtendente] = useState(null);
 
     const [agendamentosDoDia, setAgendamentosDoDia] = useState([]);
-    const [proximosAgendamentos, setProximosAgendamentos] = useState([]);
-
+    const [AgendamentosPendentes, setAgendamentosPendentes] = useState([]);
+    const [AgendamentosConcluidosDaSemana, setAgendamentosConcluidosDaSemana] = useState([]);
 
     const router = useRouter();
     const URL = "http://localhost:3000";
 
-    const fetchGetProximosAgendamentos = async (id) => {
+    const fetchGetAgendamentosPendentes = async (id) => {
         try {
             const response = await fetch(`${URL}/agendamento/getProximosAgendamentosByAtendente/${id}`, {
                 method: 'GET',
@@ -29,8 +29,23 @@ function page() {
                 }
             });
             const data = await response.json();
+            setAgendamentosPendentes(data);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    const fetchGetConcluidosSemanal = async (id) => {
+        try {
+            const response = await fetch(`${URL}/agendamento/getConcluidosSemanal/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
             console.log(data);
-            setProximosAgendamentos(data);
+            setAgendamentosConcluidosDaSemana(data);
         } catch (e) {
             console.log(e);
         }
@@ -50,7 +65,7 @@ function page() {
             console.log(e);
         }
     }
-    
+
     const fetchGetInfoUserByAtendenteId = async (Userid) => {
         try {
             const response = await fetch(`${URL}/atendente/getInfoUserByUserId/${Userid}`, {
@@ -78,7 +93,8 @@ function page() {
             setDadosAtendente(data);
             fetchGetInfoUserByAtendenteId(Userid);
             fetchGetAgendamentosDoDia(data);
-            fetchGetProximosAgendamentos(data);
+            fetchGetAgendamentosPendentes(data);
+            fetchGetConcluidosSemanal(data);
         } catch (e) {
             console.log(e);
         }
@@ -87,6 +103,10 @@ function page() {
 
 
     useEffect(() => {
+        const role = Cookies.get('token');
+        if (role !== 'ATENDENTE') {
+            router.push('/auth');
+        }
         const idUser = Cookies.get('id');
         fetchGetAtendenteByIdUser(idUser);
 
@@ -121,7 +141,7 @@ function page() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-500">Concluídos (Semanal)</p>
-                                    <h3 className="text-xl font-bold">24</h3>
+                                    <h3 className="text-xl font-bold">{AgendamentosConcluidosDaSemana.length}</h3>
                                 </div>
                             </div>
                         </div>
@@ -134,7 +154,7 @@ function page() {
                     <div className='w-full'>
                         {agendamentosDoDia.length < 1 ? (
                             <p className="text-center text-gray-500 mt-4">Nenhum agendamento no dia de hoje</p>
-                        ) : ( 
+                        ) : (
                             <AppointmentList agendamentos={agendamentosDoDia} />
                         )}
                     </div>
@@ -142,11 +162,11 @@ function page() {
 
                 <div className='mb-8'>
                     <h2 className="text-2xl font-bold text-gray-800 mb-1">
-                        Próximos Agendamentos
+                        Agendamentos Pendentes
                     </h2>
                     <div className="w-full">
-                        {proximosAgendamentos.length > 0 ? (
-                            <AppointmentList agendamentos={proximosAgendamentos} />
+                        {AgendamentosPendentes.length > 0 ? (
+                            <AppointmentList agendamentos={AgendamentosPendentes} />
                         ) : (
                             <p className="text-center text-gray-500 mt-4">Nenhum agendamento encontrado.</p>
                         )}
@@ -158,7 +178,7 @@ function page() {
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-semibold text-gray-800">Todos agendamentos</h3>
                     </div>
-                    <span onClick={()=>router.push('./funcionario/agendamentos')} className='text-sm text-blue-600 cursor-pointer'>Ver mais</span>
+                    <span onClick={() => router.push('./funcionario/agendamentos')} className='text-sm text-blue-600 cursor-pointer'>Ver mais</span>
                 </div>
 
             </div>

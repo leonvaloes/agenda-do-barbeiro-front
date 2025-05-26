@@ -72,6 +72,16 @@ export default function Header() {
                   </>
                 )}
 
+                {role === "EMPRESA" && (
+                  <>
+                    <li>
+                      <span onClick={() => {setMenuOpen(!menuOpen), router.push('empresa/DadosEmpresa')}} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                        Editar dados da empresa
+                      </span>
+                    </li>
+                  </>
+                )}
+
                 {role === "CLIENTE" && (
                   <>
                     <li>
