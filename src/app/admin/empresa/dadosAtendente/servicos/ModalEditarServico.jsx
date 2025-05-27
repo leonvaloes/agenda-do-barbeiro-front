@@ -14,6 +14,7 @@ function ModalEditarServico({ servico, onClose }) {
 
     const [FuncServ, setFuncServ] = useState([]);
     const [listaFuncionarios, setListaFuncionarios] = useState([]);
+    
     const URL = 'http://localhost:3000';
 
     useEffect(() => {
@@ -32,6 +33,11 @@ function ModalEditarServico({ servico, onClose }) {
             document.body.classList.remove('overflow-hidden');
         };
     }, [servico]);
+
+    useEffect(() => {
+        
+    }, [FuncServ, dados.funcionarios]);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -97,7 +103,17 @@ function ModalEditarServico({ servico, onClose }) {
     }
 
     const handleSalvar = async () => {
-        console.log("Dados para enviar:", dados);  // <-- aqui
+        let naoSelecionados;
+
+        if (FuncServ.length > 0) {
+            naoSelecionados = FuncServ.filter(func => !dados.funcionarios.includes(func.id));
+
+            console.log("Não selecionados:", naoSelecionados);
+            console.log("selecionados dados: ", dados.funcionarios)
+
+            // Apagar os não selecionados do banco e inserir o dados.funcionarios
+        }
+        console.log("Dados para enviar:", dados);
         await fetch(`${URL}/servicos/${servico.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -107,8 +123,8 @@ function ModalEditarServico({ servico, onClose }) {
                 tempo_medio: Number(dados.tempo_medio)
             })
         });
-        onClose();
-        window.location.reload();
+        //onClose();
+        //window.location.reload();
     };
 
     useEffect(() => {
