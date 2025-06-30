@@ -127,7 +127,6 @@ export default function NewAtendente({ Empresa_id, onClose }) {
                                         {dia.dia}
                                     </span>
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                        {/* Entrada */}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Entrada</label>
                                             <div className="relative">
@@ -139,7 +138,6 @@ export default function NewAtendente({ Empresa_id, onClose }) {
                                                 />
                                             </div>
                                         </div>
-                                        {/* Intervalo */}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Intervalo</label>
                                             <div className="relative">
@@ -151,7 +149,6 @@ export default function NewAtendente({ Empresa_id, onClose }) {
                                                 />
                                             </div>
                                         </div>
-                                        {/* Tempo */}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Tempo (min)</label>
                                             <div className="relative">
@@ -164,7 +161,6 @@ export default function NewAtendente({ Empresa_id, onClose }) {
                                                 />
                                             </div>
                                         </div>
-                                        {/* Saída */}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Saída</label>
                                             <div className="relative">
@@ -181,8 +177,7 @@ export default function NewAtendente({ Empresa_id, onClose }) {
                             ))}
                         </div>
 
-                        {/* Footer */}
-                        <div className="bg-gray-50 px-6 py-4 flex justify-between border-t border-gray-200">
+                        <div className=" px-6 py-4 flex justify-between border-t border-gray-200">
                             <button
                                 onClick={() => {
                                     setModalExpediente(false);
@@ -196,15 +191,12 @@ export default function NewAtendente({ Empresa_id, onClose }) {
                                 onClick={fetchNovoFunc}
                                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
                             >
-                                <BsSave className="mr-2" /> Salvar Atendente
+                                <BsFillSdCardFill className="mr-2" /> Criar Atendente
                             </button>
                         </div>
                     </div>
 
                 </div>
-
-
-
             )}
 
             {modalNew && (
@@ -213,7 +205,7 @@ export default function NewAtendente({ Empresa_id, onClose }) {
                         <div className="bg-gray-50 rounded-xl shadow-2xl max-w-2xl overflow-hidden">
                             <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-6">
                                 <div className="flex items-center justify-between">
-                                    <h2 className="text-2xl font-bold text-white">Criar novo Atendente</h2>
+                                    <h2 className="text-2xl font-bold text-white">Criar novo atendente</h2>
                                     <button className="text-white hover:text-blue-200" onClick={onClose}>
                                         <BsXLg size={20} />
                                     </button>
@@ -285,7 +277,7 @@ export default function NewAtendente({ Empresa_id, onClose }) {
 
                                 <div className="py-4 flex justify-between border-t border-gray-200">
                                     <button className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 flex items-center" onClick={onClose}>
-                                        <BsXLg className="mr-2" /> Cancelar
+                                        Cancelar
                                     </button>
 
                                     <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center"
@@ -294,7 +286,7 @@ export default function NewAtendente({ Empresa_id, onClose }) {
                                             setModalNew(false);
                                         }}
                                     >
-                                        <BsFillSdCardFill className="mr-2" /> Avançar
+                                        Avançar
                                     </button>
                                 </div>
                             </div>

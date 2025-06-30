@@ -17,7 +17,8 @@ export default function ModalAgendamentos({ onClose, data }) {
         const agendamentoDate = parseISO(agendamento.data_hora);
         return (
             isAfter(agendamentoDate, new Date()) &&
-            agendamento.estado?.toLowerCase()!=='cancelado'
+            agendamento.estado?.toLowerCase()!=='cancelado' &&
+            agendamento.estado?.toLowerCase()!=='concluído'
         );
     });
 

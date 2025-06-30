@@ -11,8 +11,8 @@ import Cookies from 'js-cookie';
 import { useRouter } from "next/navigation";
 import ButtonBack from '@/components/buttons/ButtonBack';
 
-
-export default function page() {
+export default function page() 
+{
     const { nomeFantasia } = useParams();
     const URL = "http://localhost:3000"
 
@@ -309,7 +309,7 @@ export default function page() {
 
             {!!modalService && (
                 <>
-                    <main className="container mx-auto px-4 py-8">code A    
+                    <main className="container mx-auto px-4 py-8">    
                     
                         <ButtonBack childreen={"Voltar"} onClick={()=>router.back()}></ButtonBack>
                         <div className="text-center mb-10">

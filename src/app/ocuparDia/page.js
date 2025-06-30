@@ -13,6 +13,7 @@ import TextField from '@mui/material/TextField';
 import { toast } from 'react-toastify';
 
 export default function page() {
+
     const router = useRouter();
     const URL = "http://localhost:3000";
     const [atendente, setAtendente] = useState();
@@ -35,7 +36,14 @@ export default function page() {
 
     const fetchOcuparData = async () => {
         try {
-            const formatada = selectedDate.toISOString().split('T')[0]; // "2025-05-21"
+            const formatada = selectedDate.toISOString().split('T')[0];
+            const today=new Date();
+
+            if(formatada<today.toISOString().split('T')[0]){
+                toast.error("Data inválida!", { position: "top-center" });
+                return;
+            }
+
             const response = await fetch(`${URL}/atendente/ocuparData/${atendente}`, {
                 method: 'PUT',
                 headers: {
@@ -43,6 +51,7 @@ export default function page() {
                 },
                 body: JSON.stringify({ data: formatada })
             });
+
             if (response.ok) {
                 toast.success("Data ocupada com sucesso!", {position:"top-center"});
                 router.back();
@@ -72,7 +81,7 @@ export default function page() {
                     <h2 className="text-2xl font-bold text-gray-800 mb-1">
                         Escolha uma data que não atenderá
                     </h2>
-                    <p className="text-gray-600">Será desativada apenas o dia escolhido.</p>
+                    <p className="text-gray-600">Será desativado apenas o dia escolhido.</p>
                 </div>
 
                 <div className="mt-8 mb-8">
@@ -89,12 +98,20 @@ export default function page() {
                         />
                     </LocalizationProvider>
                 </div>
+                
                 <div className="flex justify-between">
                     <button
                         onClick={() => fetchOcuparData()}
                         className="cursor-pointer px-6 py-2 bg-blue-600 text-white 
                         rounded-lg hover:bg-blue-700 transition-colors flex items-center">
                         Ocupar
+                    </button>
+
+                    <button
+                        onClick={() => router.push('./daysOff')()}
+                        className="cursor-pointer px-6 py-2 bg-blue-600 text-white 
+                        rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                        Ver dias ocupados
                     </button>
                 </div>
             </div>

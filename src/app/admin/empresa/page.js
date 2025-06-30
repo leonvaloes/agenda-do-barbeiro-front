@@ -160,17 +160,7 @@ function Page() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:-translate-y-1 hover:shadow-md transition-all duration-300">
-                                <div className="flex items-center">
-                                    <div className="p-2 bg-yellow-100 rounded-full text-yellow-500 mr-3">
-                                        <i ><BsFillStarFill /></i>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-500">Avaliação</p>
-                                        <h3 className="text-xl font-bold">4.8</h3>
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div>
                         <div className="mb-8">
                             <h3 className="text-lg font-semibold text-gray-800 mb-4">Gerenciamento</h3>

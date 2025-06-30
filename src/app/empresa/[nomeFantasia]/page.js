@@ -62,7 +62,7 @@ function Page() {
                             {dadosEmpresa ? dadosEmpresa.nome_fantasia : 'Carregando...'}
                         </h2>
 
-                        <p className="text-xl mb-6">Profissionais qualificados e os melhores produtos para cuidar da sua beleza</p>
+                        <p className="text-xl mb-6">{dadosEmpresa.descricao}</p>
                         <div className="flex flex-wrap gap-4">
                             <a
                                 href="#services"

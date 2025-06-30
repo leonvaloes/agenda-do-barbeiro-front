@@ -7,7 +7,6 @@ import { BsCalendar2CheckFill, BsCheckCircle } from "react-icons/bs";
 import Cookies from 'js-cookie';
 import { AppointmentList } from '@/components/appointmentCard/AppointmentList';
 
-
 function page() {
 
     const [dadosAtendente, setDadosAtendente] = useState(null);
@@ -76,12 +75,13 @@ function page() {
             });
             const data = await response.json();
             setDadosUserAtendente(data[0]);
+            
         } catch (e) {
             console.log(e);
         }
     }
 
-    const fetchGetAtendenteByIdUser = async (Userid) => {
+    const fetchGetAtendenteByIdUser = async (Userid) => {            
         try {
             const response = await fetch(`${URL}/atendente/getIdAtendente/${Userid}`, {
                 method: 'GET',
@@ -103,13 +103,12 @@ function page() {
 
 
     useEffect(() => {
-        const role = Cookies.get('token');
+        const role = Cookies.get('role');
         if (role !== 'ATENDENTE') {
             router.push('/auth');
         }
         const idUser = Cookies.get('id');
         fetchGetAtendenteByIdUser(idUser);
-
     }, []);
 
     return (

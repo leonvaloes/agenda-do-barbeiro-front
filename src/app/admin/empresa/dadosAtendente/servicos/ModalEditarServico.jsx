@@ -1,5 +1,6 @@
 'use client'
 
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { BsFillSdCardFill, BsXLg } from "react-icons/bs";
 
@@ -14,7 +15,6 @@ function ModalEditarServico({ servico, onClose }) {
 
     const [FuncServ, setFuncServ] = useState([]);
     const [listaFuncionarios, setListaFuncionarios] = useState([]);
-    
     const URL = 'http://localhost:3000';
 
     useEffect(() => {
@@ -27,17 +27,11 @@ function ModalEditarServico({ servico, onClose }) {
                 funcionarios: servico.funcionarios || []
             });
         }
-
         document.body.classList.add('overflow-hidden');
         return () => {
             document.body.classList.remove('overflow-hidden');
         };
     }, [servico]);
-
-    useEffect(() => {
-        
-    }, [FuncServ, dados.funcionarios]);
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -57,12 +51,11 @@ function ModalEditarServico({ servico, onClose }) {
                 throw new Error('Erro ao buscar atendentes');
             }
             const data = await response.json();
-
-            const funcionarios = Array.isArray(data[0]) ? data[0] : data;
+            const funcionarios = data.flat();
             setFuncServ(funcionarios);
+
             const ids = funcionarios.map(func => func.id);
             setDados(prev => ({ ...prev, funcionarios: ids }));
-
         } catch (err) {
             console.error("Erro ao buscar atendentes:", err);
         }
@@ -104,16 +97,33 @@ function ModalEditarServico({ servico, onClose }) {
 
     const handleSalvar = async () => {
         let naoSelecionados;
+        let selecionados;
 
         if (FuncServ.length > 0) {
             naoSelecionados = FuncServ.filter(func => !dados.funcionarios.includes(func.id));
+            selecionados = dados.funcionarios.filter(funcId =>
+                !FuncServ.some(f => f.id === funcId)
+            );
+            const empresaId = Cookies.get('id');
+            await fetch(`${URL}/servicos/addFuncServ/${servico.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    funcionarios: selecionados,
+                    empresaId: empresaId
+                })
+            });
 
-            console.log("Não selecionados:", naoSelecionados);
-            console.log("selecionados dados: ", dados.funcionarios)
-
-            // Apagar os não selecionados do banco e inserir o dados.funcionarios
+            await fetch(`${URL}/servicos/deleteFuncServ/${servico.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    funcionarios: naoSelecionados,
+                    empresaId: empresaId
+                })
+            });
+            
         }
-        console.log("Dados para enviar:", dados);
         await fetch(`${URL}/servicos/${servico.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -123,13 +133,8 @@ function ModalEditarServico({ servico, onClose }) {
                 tempo_medio: Number(dados.tempo_medio)
             })
         });
-        //onClose();
-        //window.location.reload();
+        onClose();
     };
-
-    useEffect(() => {
-        console.log("dados mudou:", dados);
-    }, [dados]);
 
     useEffect(() => {
         getEmpresa();
