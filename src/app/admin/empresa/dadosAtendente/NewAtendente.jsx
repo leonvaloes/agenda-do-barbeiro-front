@@ -127,28 +127,76 @@ export default function NewAtendente({ Empresa_id, onClose }) {
                                         {dia.dia}
                                     </span>
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+                                        {/* ENTRADA */}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Entrada</label>
-                                            <div className="relative">
-                                                <input
-                                                    type="time"
-                                                    value={dia.entrada}
-                                                    onChange={(e) => handleExpedienteChange(index, 'entrada', e.target.value)}
-                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                />
+                                            <div className="relative flex gap-2">
+                                                <select
+                                                    value={dia.entrada.split(":")[0]}
+                                                    onChange={(e) => {
+                                                        const hora = e.target.value;
+                                                        const minutos = dia.entrada.split(":")[0] || "00";
+                                                        handleExpedienteChange(index, "entrada", `${hora}:${minutos}`);
+                                                    }}
+                                                    className="w-1/2 px-4 py-2 border border-gray-300 rounded-lg"
+                                                >
+                                                    {[...Array(24)].map((_, i) => {
+                                                        const val = (0 + i).toString().padStart(2, "0");
+                                                        return <option key={val} value={val}>{val}</option>;
+                                                    })}
+                                                </select>
+                                                <select
+                                                    value={dia.entrada.split(":")[0]}
+                                                    onChange={(e) => {
+                                                        const hora = dia.entrada.split(":")[0] || "00";
+                                                        const minutos = e.target.value;
+                                                        handleExpedienteChange(index, "entrada", `${hora}:${minutos}`);
+                                                    }}
+                                                    className="w-1/2 px-4 py-2 border border-gray-300 rounded-lg"
+                                                >
+                                                    {["00", "15", "30", "45"].map((m) => (
+                                                        <option key={m} value={m}>{m}</option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
+
+                                        {/* INTERVALO */}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Intervalo</label>
-                                            <div className="relative">
-                                                <input
-                                                    type="time"
-                                                    value={dia.intervalo}
-                                                    onChange={(e) => handleExpedienteChange(index, 'intervalo', e.target.value)}
-                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                />
+                                            <div className="relative flex gap-2">
+                                                <select
+                                                    value={dia.intervalo?.split(":")[0] || "00"}
+                                                    onChange={(e) => {
+                                                        const hora = e.target.value;
+                                                        const minutos = dia.intervalo?.split(":")[1] || "00";
+                                                        handleExpedienteChange(index, "intervalo", `${hora}:${minutos}`);
+                                                    }}
+                                                    className="w-1/2 px-4 py-2 border border-gray-300 rounded-lg"
+                                                >
+                                                    {[...Array(24)].map((_, i) => {
+                                                        const val = (0 + i).toString().padStart(2, "0");
+                                                        return <option key={val} value={val}>{val}</option>;
+                                                    })}
+                                                </select>
+                                                <select
+                                                    value={dia.intervalo?.split(":")[1] || "00"}
+                                                    onChange={(e) => {
+                                                        const hora = dia.intervalo?.split(":")[0] || "00";
+                                                        const minutos = e.target.value;
+                                                        handleExpedienteChange(index, "intervalo", `${hora}:${minutos}`);
+                                                    }}
+                                                    className="w-1/2 px-4 py-2 border border-gray-300 rounded-lg"
+                                                >
+                                                    {["00", "15", "30", "45"].map((m) => (
+                                                        <option key={m} value={m}>{m}</option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
+
+                                        {/* TEMPO */}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Tempo (min)</label>
                                             <div className="relative">
@@ -161,18 +209,42 @@ export default function NewAtendente({ Empresa_id, onClose }) {
                                                 />
                                             </div>
                                         </div>
+
+                                        {/* SAÍDA */}
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-1">Saída</label>
-                                            <div className="relative">
-                                                <input
-                                                    type="time"
-                                                    value={dia.saida}
-                                                    onChange={(e) => handleExpedienteChange(index, 'saida', e.target.value)}
-                                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                                />
+                                            <div className="relative flex gap-2">
+                                                <select
+                                                    value={dia.saida.split(":")[0]}
+                                                    onChange={(e) => {
+                                                        const hora = e.target.value;
+                                                        const minutos = dia.saida.split(":")[1] || "00";
+                                                        handleExpedienteChange(index, "saida", `${hora}:${minutos}`);
+                                                    }}
+                                                    className="w-1/2 px-4 py-2 border border-gray-300 rounded-lg"
+                                                >
+                                                    {[...Array(24)].map((_, i) => {
+                                                        const val = (0 + i).toString().padStart(2, "0");
+                                                        return <option key={val} value={val}>{val}</option>;
+                                                    })}
+                                                </select>
+                                                <select
+                                                    value={dia.saida.split(":")[1]}
+                                                    onChange={(e) => {
+                                                        const hora = dia.saida.split(":")[0] || "08";
+                                                        const minutos = e.target.value;
+                                                        handleExpedienteChange(index, "saida", `${hora}:${minutos}`);
+                                                    }}
+                                                    className="w-1/2 px-4 py-2 border border-gray-300 rounded-lg"
+                                                >
+                                                    {["00", "15", "30", "45"].map((m) => (
+                                                        <option key={m} value={m}>{m}</option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                             ))}
                         </div>

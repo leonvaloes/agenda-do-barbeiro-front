@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams,  } from 'next/navigation';
 import Cookies from 'js-cookie';
 
-import {
-    FaCut,
-    FaCalendarAlt,
-} from 'react-icons/fa';
+import {FaCut, FaCalendarAlt} from 'react-icons/fa';
+
+import { BsFillGeoAltFill, BsClockFill } from "react-icons/bs";
+
 
 function Page() {
     const URL = "http://localhost:3000";
@@ -138,7 +138,7 @@ function Page() {
                         <div className="info-card bg-gray-50 p-6 rounded-lg shadow-md">
                             <div className="flex items-start">
                                 <div className="bg-blue-100 p-3 rounded-full mr-4">
-                                    <i className="fas fa-map-marker-alt text-blue-600 text-xl"></i>
+                                    <i className="text-blue-600 text-xl"><BsFillGeoAltFill /></i>
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-lg mb-1">Endereço</h3>
@@ -152,7 +152,7 @@ function Page() {
                         <div className="info-card bg-gray-50 p-6 rounded-lg shadow-md">
                             <div className="flex items-start">
                                 <div className="bg-green-100 p-3 rounded-full mr-4">
-                                    <i className="fas fa-clock text-green-600 text-xl"></i>
+                                    <i className="text-green-600 text-xl"><BsClockFill /></i>
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-lg mb-1">Horário de Funcionamento</h3>
@@ -170,3 +170,4 @@ function Page() {
 }
 
 export default Page;
+    
