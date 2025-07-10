@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { BsArrowLeft, BsSave } from "react-icons/bs";
+import { toast } from 'react-toastify';
 
-function ModalFuncionarios({ funcionario ,onClose }) {
+function ModalFuncionarios({ funcionario, onClose }) {
 
     const URL = "http://localhost:3000";
 
@@ -18,7 +19,6 @@ function ModalFuncionarios({ funcionario ,onClose }) {
     ]);
 
 
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setDados(prev => ({ ...prev, [name]: value }));
@@ -31,11 +31,37 @@ function ModalFuncionarios({ funcionario ,onClose }) {
         setExpediente(updated);
     };
 
+    const changeExpediente = async () => {
+        console.log("ID FUNC: ",funcionario.atendente_id);
+        console.log("expediente: ", expediente);
+        try {
+            const response = await fetch(`${URL}/atendente/atualizarExpediente/${funcionario.atendente_id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(expediente)
+            });
+            
+            console.log("chag aqui?")
+
+            if (!response.ok) 
+                throw new Error("Erro ao salvar expediente");
+            const result = await response.json();
+            toast.success("Expediente salvo com sucesso!", { position: "top-center" });
+            onClose(true);
+        } catch (error) {
+            console.error("Erro ao salvar expediente:", error);
+            alert("Erro ao salvar expediente. Verifique os dados.");
+        }
+    };
+
+
     useEffect(() => {
         const fetchExpediente = async () => {
             try {
-                const response = await fetch(`${URL}/atendente/getExpediente/${funcionario.atendente_id}`,{
-                    method:'GET',
+                const response = await fetch(`${URL}/atendente/getExpediente/${funcionario.atendente_id}`, {
+                    method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -153,6 +179,7 @@ function ModalFuncionarios({ funcionario ,onClose }) {
                             </button>
                             <button
                                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                                onClick={() => changeExpediente()}
                             >
                                 <BsSave className="mr-2" /> Salvar expediente
                             </button>

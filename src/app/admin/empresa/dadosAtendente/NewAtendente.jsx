@@ -48,8 +48,6 @@ export default function NewAtendente({ Empresa_id, onClose }) {
     };
 
     const fetchExpediente = async (id) => {
-        console.log("Dados enviados no expediente:", JSON.stringify(expediente));
-
         try {
             const response = await fetch(`${URL}/atendente/expediente/${id}`, {
                 method: 'POST',
@@ -147,9 +145,9 @@ export default function NewAtendente({ Empresa_id, onClose }) {
                                                     })}
                                                 </select>
                                                 <select
-                                                    value={dia.entrada.split(":")[0]}
+                                                    value={dia.entrada?.split(":")[1] || "00"}
                                                     onChange={(e) => {
-                                                        const hora = dia.entrada.split(":")[0] || "00";
+                                                        const hora = dia.entrada?.split(":")[0] || "00";
                                                         const minutos = e.target.value;
                                                         handleExpedienteChange(index, "entrada", `${hora}:${minutos}`);
                                                     }}

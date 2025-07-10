@@ -72,6 +72,16 @@ export default function Header() {
                   </>
                 )}
 
+                {role === "ATENDENTE" && (
+                  <>
+                    <li>
+                      <span onClick={() => {setMenuOpen(!menuOpen), router.push('/ocuparHorario')}} className="block py-2 px-3 text-gray-700 hover:bg-blue-50 rounded">
+                        Excluir horário
+                      </span>
+                    </li>
+                  </>
+                )}
+
                 {role === "EMPRESA" && (
                   <>
                     <li>
