@@ -81,6 +81,21 @@ function page() {
         }
     }
 
+    const fetchGetRemarcarAgendamentos= async (id) => {
+        try {
+            const response = await fetch(`${URL}/agendamento/getRemarcarAgendamentos/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            console.log(data);
+        } catch (e) {
+            console.log(e);
+        }
+    })
+
     const fetchGetAtendenteByIdUser = async (Userid) => {            
         try {
             const response = await fetch(`${URL}/atendente/getIdAtendente/${Userid}`, {
@@ -91,6 +106,7 @@ function page() {
             });
             const data = await response.json();
             setDadosAtendente(data);
+            fetchGetRemarcarAgendamentos(data);
             fetchGetInfoUserByAtendenteId(Userid);
             fetchGetAgendamentosDoDia(data);
             fetchGetAgendamentosPendentes(data);

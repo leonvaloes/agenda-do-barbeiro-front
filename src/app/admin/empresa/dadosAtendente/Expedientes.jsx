@@ -43,8 +43,6 @@ function ModalFuncionarios({ funcionario, onClose }) {
                 body: JSON.stringify(expediente)
             });
             
-            console.log("chag aqui?")
-
             if (!response.ok) 
                 throw new Error("Erro ao salvar expediente");
             const result = await response.json();
