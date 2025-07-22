@@ -17,7 +17,6 @@ export default function page() {
 
   const [agendamentos, setAgendamentos] = useState(null);
 
-
   const router = useRouter();
 
   async function handleFiltrar() {
@@ -113,9 +112,6 @@ export default function page() {
               Resultados
             </h1>
 
-
-
-
             {agendamentos === null ? (
               <p className="text-gray-500 col-span-full">Ajuste os filtros de data para visualizar os agendamentos.</p>
             ) : agendamentos.length === 0 ? (
@@ -179,15 +175,8 @@ export default function page() {
                 </div>
               </>
             )}
-
-
-
-
-
-
           </div>
         </div>
-
       </div>
     </div>
   );

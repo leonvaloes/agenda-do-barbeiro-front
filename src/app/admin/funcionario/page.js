@@ -6,11 +6,18 @@ import { useRouter } from 'next/navigation';
 import { BsCalendar2CheckFill, BsCheckCircle } from "react-icons/bs";
 import Cookies from 'js-cookie';
 import { AppointmentList } from '@/components/appointmentCard/AppointmentList';
+import ModalAgendamentos from '../empresa/EditAgendamentos/ModalAgendamentos ';
 
 function page() {
 
     const [dadosAtendente, setDadosAtendente] = useState(null);
     const [dadosUserAtendente, setDadosUserAtendente] = useState(null);
+
+    const [RemarcarAgendamentos, setRemarcarAgendamentos] = useState(null);
+    const [modalAgendamentos, setModalAgendamentos] = useState(false);
+    const [flag, setFlag] = useState(false);
+    const [data, setData] = useState([]);
+
 
     const [agendamentosDoDia, setAgendamentosDoDia] = useState([]);
     const [AgendamentosPendentes, setAgendamentosPendentes] = useState([]);
@@ -75,28 +82,38 @@ function page() {
             });
             const data = await response.json();
             setDadosUserAtendente(data[0]);
-            
+
         } catch (e) {
             console.log(e);
         }
     }
 
-    const fetchGetRemarcarAgendamentos= async (id) => {
+    const fetchGetRemarcarAgendamentos = async (id) => {
+        console.log("data-> ", id);
         try {
-            const response = await fetch(`${URL}/agendamento/getRemarcarAgendamentos/${id}`, {
+            const response = await fetch(`${URL}/atendente/getRemarcarAgendamentos/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             const data = await response.json();
-            console.log(data);
+            console.log("TESTE AQUI: ", data);
+            setRemarcarAgendamentos(data);
+
+            if (data && data.length > 0) {
+                setFlag(true);
+            } else {
+                setFlag(false);
+            }
+
         } catch (e) {
             console.log(e);
         }
-    })
+    }
 
-    const fetchGetAtendenteByIdUser = async (Userid) => {            
+
+    const fetchGetAtendenteByIdUser = async (Userid) => {
         try {
             const response = await fetch(`${URL}/atendente/getIdAtendente/${Userid}`, {
                 method: 'GET',
@@ -116,6 +133,13 @@ function page() {
         }
     }
 
+    const GetDadosSelecionados = (dados) => {
+        setData([dados]);
+    };
+
+    useEffect(() => {
+        console.log('Data atualizada:', data);
+    }, [data]);
 
 
     useEffect(() => {
@@ -129,6 +153,45 @@ function page() {
 
     return (
         <>
+            {!!modalAgendamentos && (
+                <ModalAgendamentos data={data} onClose={() => setModalAgendamentos(false)} />
+            )}
+
+            {!!flag && (
+                <>
+                    <div className="fixed inset-0 bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50 px-4"></div>
+                    <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+                        <div className="bg-gray-50 rounded-lg p-6 w-full max-w-md sm:max-w-lg">
+                            <h2 className="text-lg font-bold mb-4">Agendamentos a Remarcar</h2>
+                            <ul>
+                                {RemarcarAgendamentos.map((agendamento) => (
+                                    <div
+                                        key={agendamento.id}
+                                        className="border border-blue-500 p-3 rounded-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4"
+                                    >
+                                        <li className="text-sm flex-1">
+                                            <p><strong>Cliente:</strong> {agendamento.nome_cliente}</p>
+                                            <p><strong>Data e hora:</strong> {new Date(agendamento.data_hora).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                                            <p><strong>Serviço:</strong> {agendamento.nome_servico}</p>
+                                        </li>
+
+                                        <button onClick={() => { GetDadosSelecionados(agendamento); setFlag(false); setModalAgendamentos(true); }} className="bg-blue-500 w-full sm:w-auto text-white px-4 py-2 rounded-md">
+                                            Reagendar
+                                        </button>
+                                    </div>
+                                ))}
+                            </ul>
+                            <button
+                                onClick={() => setFlag(false)}
+                                className="bg-red-500 mt-6 w-full text-white px-4 py-2 rounded-md"
+                            >
+                                Fechar
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
+
             <div className="flex-grow container mx-auto px-4 py-6">
                 <div className="mb-8">
                     <h2 className="text-2xl font-bold text-gray-800 mb-1">
@@ -195,10 +258,9 @@ function page() {
                     </div>
                     <span onClick={() => router.push('./funcionario/agendamentos')} className='text-sm text-blue-600 cursor-pointer'>Ver mais</span>
                 </div>
-
             </div>
         </>
-    );
+    )
 }
 
 export default page;

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Table from '@/components/Table/Table';
-import { parseISO, format,isAfter  } from 'date-fns';
+import { parseISO, format, isAfter } from 'date-fns';
 
 const URL = 'http://localhost:3000';
 
@@ -17,8 +17,8 @@ export default function ModalAgendamentos({ onClose, data }) {
         const agendamentoDate = parseISO(agendamento.data_hora);
         return (
             isAfter(agendamentoDate, new Date()) &&
-            agendamento.estado?.toLowerCase()!=='cancelado' &&
-            agendamento.estado?.toLowerCase()!=='concluído'
+            agendamento.estado?.toLowerCase() !== 'cancelado' &&
+            agendamento.estado?.toLowerCase() !== 'concluído'
         );
     });
 
@@ -32,6 +32,7 @@ export default function ModalAgendamentos({ onClose, data }) {
                 <button
                     className="text-blue-600 hover:underline transition duration-200"
                     onClick={() => {
+                        console.log("🔍 Dados do agendamento (row):", row); // <-- AQUI!
                         setAgendamentoSelecionado(row);
                         setNovaData('');
                         setNovaHora('');
@@ -42,6 +43,7 @@ export default function ModalAgendamentos({ onClose, data }) {
                     Remarcar
                 </button>
             )
+
         }
     ];
 
@@ -92,6 +94,11 @@ export default function ModalAgendamentos({ onClose, data }) {
 
     const handleSalvarRemarcacao = async () => {
         const data_hora = `${novaData} ${novaHora}`;
+        console.log("AQUI PORRA============",agendamentoSelecionado.item_id,
+            data_hora,
+            agendamentoSelecionado.atendente_id,
+            agendamentoSelecionado.id,
+            agendamentoSelecionado.tempo_medio)
         try {
             const response = await fetch(`${URL}/empresa/reagendamento`, {
                 method: 'PUT',
@@ -101,13 +108,10 @@ export default function ModalAgendamentos({ onClose, data }) {
                     nova_data: data_hora,
                     atendente_id: agendamentoSelecionado.atendente_id,
                     agendamento_id: agendamentoSelecionado.id,
-                    servicos: {
-                        id: agendamentoSelecionado.servicos_id,
-                        tempo_medio: agendamentoSelecionado.tempo_medio,
-                        item_id: agendamentoSelecionado.servicos_item_id,
-                    }
+                    tempo_medio: agendamentoSelecionado.tempo_medio
                 })
             })
+
             if (!response.ok) {
                 throw new Error('Erro ao atualizar');
             }
